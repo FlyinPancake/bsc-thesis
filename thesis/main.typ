@@ -8,7 +8,7 @@
     margin: 3cm
 )
 
-
+#include "pages/project.typ"
 #include "pages/titlepage.typ"
 #set page(numbering: "1")
 #counter(page).update(1)
@@ -18,3 +18,12 @@
 #set page(numbering: "1")
 #include "pages/abstract.typ"
 #include "pages/chapters.typ"
+#set page(numbering: "I")
+#pagebreak()
+#counter(page).update(1)
+#include "pages/bibliography.typ"
+#pagebreak()
+#outline(
+  title: [List of Figures],
+  target: figure.where(kind: image),
+)

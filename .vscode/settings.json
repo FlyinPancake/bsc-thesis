@@ -1,0 +1,14 @@
+{
+    "typst-lsp.rootPath": "${workspaceFolder}/thesis/",
+    "typst-lsp.experimentalFormatterMode": "on",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "thesis/pages/**/*.pdf": true,
+        "thesis/preamble.pdf": true,
+    },
+}

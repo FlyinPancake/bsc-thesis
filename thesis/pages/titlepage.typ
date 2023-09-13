@@ -1,4 +1,4 @@
-#import "../preamble.typ": student, consultant, show_today
+#import "../preamble.typ": student, consultant, show_today_hu
 #page[
     #align(center)[
         #v(3mm)
@@ -31,8 +31,6 @@
                 *#consultant*
             ]
         )
-        #align(bottom)[
-            Budapest, #show_today
-        ]
+        #align(bottom)[Budapest, #show_today_hu]
     ]
 ]
