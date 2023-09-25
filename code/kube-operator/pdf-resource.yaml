@@ -1,0 +1,10 @@
+kind: PdfDocument
+apiVersion: k8s.flyinpancake.com/v1
+metadata:
+  name: my-document
+
+spec:
+  documentName: my-text
+  text: |
+    ### My Document
+    Hello **World**!
