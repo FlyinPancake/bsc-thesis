@@ -6,7 +6,7 @@ metadata:
   name: postgresdb-persistent-volume
   # Labels for identifying PV
   labels:
-    type: local
+    type: longhorn
     app: postgresdb
 spec:
   storageClassName: manual

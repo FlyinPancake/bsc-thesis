@@ -4,6 +4,14 @@
 #
 # For an example of a bibliography file, see
 # https://github.com/typst/hayagriva/blob/main/tests/basic.yml
+# yaml-language-server: $schema=
+
+kuberntes-wikipedia:
+  type: Web
+  title: Kubernetes
+  url:
+    value: https://en.wikipedia.org/wiki/Kubernetes
+    date: 2023-11-15
 
 harry:
   type: Book

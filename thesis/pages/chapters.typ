@@ -6,6 +6,6 @@
     #it.body
 ]
 
-#include "chapters/chapter_1.typ" 
-#include "chapters/chapter_2.typ"
+#include "chapters/chapter_1_intro.typ" 
+#include "chapters/chapter_2_background.typ"
 // #import "@preview/tablex:0.0.5"
