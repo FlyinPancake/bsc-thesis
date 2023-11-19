@@ -13,6 +13,13 @@ kuberntes-wikipedia:
     value: https://en.wikipedia.org/wiki/Kubernetes
     date: 2023-11-15
 
+kube-docs:
+  type: Web
+  title: Kubernetes Documentation
+  url:
+    value: https://kubernetes.io/docs/home/
+    date: 2023-11-19
+
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix

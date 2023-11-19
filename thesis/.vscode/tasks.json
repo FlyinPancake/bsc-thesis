@@ -33,11 +33,11 @@
             }
         },
         {
-            "label": "run server",
+            "label": "run languagetool server",
             "command": "java",
             "args": [
                 "-cp",
-                "~/LanguageTool-6.3/languagetool-server.jar",
+                "${env:HOME}/LanguageTool-6.3/languagetool-server.jar",
                 "org.languagetool.server.HTTPServer",
                 "--port",
                 "8081",

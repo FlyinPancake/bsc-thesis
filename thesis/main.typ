@@ -13,7 +13,7 @@
 #include "pages/titlepage.typ"
 #set page(numbering: "1")
 #counter(page).update(1)
-#outline()
+#outline(depth: 3)
 #set page(numbering: none)
 #include "pages/declaration.typ"
 #set page(numbering: "1")
