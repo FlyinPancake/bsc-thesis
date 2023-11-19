@@ -6,7 +6,7 @@
             "../figures/BMElogo.png",
             width: 60mm
         )
-        *Budapesti Mûszaki és Gazdaságtudományi Egyetem*\
+        *Budapesti Műszaki és Gazdaságtudományi Egyetem*\
         Villamosmérnöki és Informatikai Kar\
         Távközlési és Médiainformatikai Tanszék
         #v(54mm)

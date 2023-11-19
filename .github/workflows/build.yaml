@@ -19,10 +19,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y pdftk
 
       - name: Run Modifier script
-        run: thesis/scripts/add_project_desc.sh thesis/main.pdf thesis/assets/project.pdf tehsis/main.pdf
+        run: thesis/scripts/add_project_desc.sh thesis/main.pdf thesis/assets/project.pdf thesis/main.pdf
 
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
+        if: ${{ !env.ACT }}
         with:
           name: PDF
           path: thesis/main.pdf
