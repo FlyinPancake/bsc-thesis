@@ -11,10 +11,10 @@
     margin: 3cm
 )
 
-#include "pages/project.typ"
 #page[
 #todo_outline
 ]
+#include "pages/project.typ"
 #include "pages/titlepage.typ"
 #set page(numbering: "1")
 #counter(page).update(1)

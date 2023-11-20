@@ -1,6 +1,4 @@
+#set page(margin: 0cm)
 #page[
-    #set text(lang: "hu")
-    #align(center,text(size: 14pt,upper[*Feladatkiírás*]))
-
-    #lorem(50)
+    #image("../assets/project.svg")
 ]

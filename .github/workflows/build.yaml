@@ -15,11 +15,6 @@ jobs:
         uses: lvignoli/typst-action@main
         with:
           source_file: thesis/main.typ
-      - name: Install PDFTK
-        run: sudo apt-get update && sudo apt-get install -y pdftk
-
-      - name: Run Modifier script
-        run: thesis/scripts/add_project_desc.sh thesis/main.pdf thesis/assets/project.pdf thesis/main.pdf
 
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
