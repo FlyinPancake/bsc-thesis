@@ -1,3 +1,4 @@
+#import "@preview/big-todo:0.2.0": *
 #set par(leading: 0.55em, first-line-indent: 1.8em, justify: true)
 // #show par: set block(spacing: 0.55em)
 #set text(font: "Times New Roman", size: 12pt)
@@ -11,6 +12,9 @@
 )
 
 #include "pages/project.typ"
+#page[
+#todo_outline
+]
 #include "pages/titlepage.typ"
 #set page(numbering: "1")
 #counter(page).update(1)

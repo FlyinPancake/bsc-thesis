@@ -1,4 +1,4 @@
-#import "../preamble.typ": student, consultant, show_today_hu
+#import "../preamble.typ": student, consultant, show_today, second_consultant, external_consultant
 #page[
     #align(center)[
         #v(3mm)
@@ -6,31 +6,33 @@
             "../figures/BMElogo.png",
             width: 60mm
         )
-        *Budapesti Műszaki és Gazdaságtudományi Egyetem*\
-        Villamosmérnöki és Informatikai Kar\
-        Távközlési és Médiainformatikai Tanszék
+        *Budapest University of Technology and Economics*\
+        Faculty of Electrical Engineering and Informatics\
+        Dept. of Telecommunications and Media Informatics
         #v(54mm)
         #text(weight: "bold", size: 20pt)[
-            vcluster: virtual clusters for Kubernetes
+            Performance and useability analysis of virtual clusters in Kubernetes
         ]
         #v(5mm)
         #text(size: 14pt)[
-            #smallcaps[Szakdolgozat]
+            #smallcaps[BSc Thesis]
         ]
         #v(40mm)
         #grid(
             columns: (7cm, 7cm),
             box[
-                _Készítette_
+                _Author_
 
                 *#student*
             ],
             box[
-                _Konzulens_
+                _Supervisors_
                 
-                *#consultant*
+                #consultant\
+                #second_consultant\
+                #external_consultant
             ]
         )
-        #align(bottom)[Budapest, #show_today_hu]
+        #align(bottom)[Budapest, #show_today]
     ]
 ]

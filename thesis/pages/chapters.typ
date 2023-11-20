@@ -13,4 +13,9 @@
 
 #include "chapters/chapter_1_intro.typ" 
 #include "chapters/chapter_2_background.typ"
+#import "@preview/big-todo:0.2.0": todo
+#todo[Measurement Planning]
+#todo[Measurement Execution]
+#todo[Measurement Evaluation]
+#todo[Conclusion]
 // #import "@preview/tablex:0.0.5"
