@@ -1,5 +1,4 @@
 = Introduction <intro>
-== What is this? <what>
 
 
 
