@@ -1,4 +1,9 @@
-#set heading(numbering: "1.1.1.1")
+
+#set heading(numbering: (..n) => {
+  if n.pos().len() < 4 {
+    numbering("1.1", ..n)
+  } 
+})
 #show heading.where(level:1): it => [
     #pagebreak()
     #text(size: 14pt)[Chapter #counter(heading).display(it.numbering)]\

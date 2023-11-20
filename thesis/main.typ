@@ -14,7 +14,7 @@
 #include "pages/titlepage.typ"
 #set page(numbering: "1")
 #counter(page).update(1)
-#outline(depth: 3)
+#outline(depth: 2)
 #set page(numbering: none)
 #include "pages/declaration.typ"
 #set page(numbering: "1")
