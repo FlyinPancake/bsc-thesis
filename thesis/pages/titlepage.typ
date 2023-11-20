@@ -1,4 +1,4 @@
-#import "../preamble.typ": student, consultant, show_today, second_consultant, external_consultant
+#import "../preamble.typ": student_name_en as student, consultant, show_today, second_consultant, external_consultant
 #page[
     #align(center)[
         #v(3mm)

@@ -1,4 +1,4 @@
-#import "../preamble.typ": student, show_today_hu
+#import "../preamble.typ": student_name_hu as student, show_today_hu
 
 #page[
     #set text(lang: "hu")
