@@ -215,7 +215,7 @@ They can be scoped to a namespace, or cluster-wide.
 This will depend on how the controller is implemented and what the use case is.
 
 The most common Kubernetes Operators can be found in the OperatorHub#footnote[https://operatorhub.io/], which is a registry of operators.
-It is maintained by Red Hat, and is a part of the Operator Lifecycle Manager (OLM) [#ref(<olm>)].
+It is maintained by Red Hat, and is a part of the Operator Lifecycle Manager (OLM) [#ref(<olm-section>)].
 OperatorHub is a great place to find operators for common use cases, such as databases, message queues, and monitoring solutions.
 It provides `helm` charts for easy installation.
 
@@ -249,7 +249,7 @@ It utilizes Kubernetes' namespaces feature, and improves on it.
 Compared to fully separate Kubernetes cluster, virtual clusters do not have their own node pool nor networking. Instead, they inherit these from the parent cluster.
 They are scheduling workloads on the host cluster, however they have their own virtual control plane.
 
-#figure(image("../../figures/vcluster-arch.excalidraw.svg"), caption: "vCluster Architecture")
+#figure(image("../../figures/vcluster-arch.excalidraw.svg"), caption: "vCluster Architecture") <vcluster-arch>
 === vCluster Architecture
 
 vCluster is used in conjunction with `kubectl`, the Kubernetes CLI.
@@ -321,13 +321,19 @@ This is a common problem, and in Kubernetes namespaces can be used as a workarou
 Some of these operators have to be installed cluster-wide, and cannot be installed in a namespace.
 This creates a problem, since we cannot use namespaces to isolate them.
 
-=== Operator Lifecycle Manager <olm>
+=== #gls("olm", long: true) <olm-section>
 
-The Operator Lifecycle Manager (OLM) is a tool that helps users install, update, and manage the lifecycle of all Operators and their associated services running across their Kubernetes clusters.
-OLM extends Kubernetes' native API and CLI to provide a declarative way to install, manage, and upgrade Operators and their dependencies in a cluster.
+@olm is a tool that helps users install, update, and manage the lifecycle of all Operators and their associated services running across their Kubernetes clusters.
+The Operator Lifecycle includes its installation, updates, and removal in a Kubernetes cluster.
+Operators can be installed from Catalogs, which are collections of Operators that have been built, tested, and are maintained for Kubernetes and OpenShift users by independent software vendors (ISVs), community members, and Red Hat (the makers of @olm).
+@olm extends Kubernetes' native API and CLI to provide a declarative way to manage Operators and their dependencies in a cluster.
 
-It can be used to solve version mismatch problems by installing the adequate version of the operator in the cluster.
-This solution is not a silver bullet, since it requires that some version of the operator supports all the version requirements of the dependent pieces of software.
+To solve the version conflict the Dependency Resolution can be used. 
+Dependency Resolution solves version mismatch problems by installing the adequate version of the operator that satisfies all of the version reuqirements in the cluster.
+
+For example: if we have two operators: `foo` and `bar` that both depend on `baz`, @olm will look at the version requirements of `foo` and `bar`. If `foo` requires `baz` version `1.2` to `1.8`, and `bar` requires `baz` version `1.7` exactly, @olm will install `baz` version `1.7`, since it satisfies both requirements.
+
+In an other exampel if `foo` requires `baz` version `1.2` to `1.8`, and `bar` requires `baz` version `1.9` exactly, @olm will not be able to install `baz`, since there is no version that satisfies both requirements. In this case, the user has to manually resolve the conflict somehow. This is why @olm is not a silver bullet, and it cannot solve all version conflicts.
 
 === OpenStack Projects
 
@@ -340,5 +346,8 @@ This solution is not sufficient, since it removes the ability to dynamically sca
 
 === How can vCluster help?
 
-Since the @crd[s]
+Since the @crd[s] can be scoped to cluster-wide or namespace-scoped, we cannot always use namespaces to isolate the different versions of the operator.
+However, vCluster considers the @crd[s] high-level components, as we have seen in @vcluster-arch and does not sync them to the host cluster.
+Since the @crd[s] are not synced to the host cluster, they do not appear in the host cluster, only in the virtual control plane.
+This leads to the conclusion, that the @crd[s] are isolated to the virtual cluster.
 

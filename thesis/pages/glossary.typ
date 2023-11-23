@@ -13,7 +13,13 @@
     key: "persistentvolume",
     short: "PV",
     long: "Persistent Volume",
-    desc: [A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes.]
+    desc: [A `PersistentVolume` is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes.]
+  ),
+  (
+    key: "olm",
+    short: "OLM",
+    long: "Operator Lifecycle Manager",
+    desc: [The Operator Lifecycle Manager facilitates the management of operators in the Kubernetes Cluster.]
   )
 ))
 ]

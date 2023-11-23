@@ -27,6 +27,13 @@ kube-rs:
     value: https://kube.rs/
     date: 2023-11-23
 
+vcluster:
+  type: Web
+  title: "vCluster"
+  url:
+    value: https://www.vcluster.com/docs/
+    date: 2023-11-23
+
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix
