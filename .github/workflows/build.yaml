@@ -10,6 +10,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      
+      - name: "Install Required Fonts"
+        run: |
+          curl -Lo merriweather.zip https://fonts.google.com/download?family=Merriweather
+          unzip merriweather.zip -d /usr/share/fonts
+          curl -Lo cascadiacode.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.0/CascadiaCode.zip
+          unzip cascadiacode.zip -d /usr/share/fonts
+          fc-cache -fv
+
 
       - name: Typst
         uses: lvignoli/typst-action@main
