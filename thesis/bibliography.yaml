@@ -20,6 +20,13 @@ kube-docs:
     value: https://kubernetes.io/docs/home/
     date: 2023-11-19
 
+kube-rs:
+  type: Web
+  title: "kube-rs"
+  url:
+    value: https://kube.rs/
+    date: 2023-11-23
+
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix

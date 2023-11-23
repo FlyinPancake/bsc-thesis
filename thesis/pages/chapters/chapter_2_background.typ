@@ -198,7 +198,7 @@ For example, we can create a custom resource for a database, and a controller th
 A Kubernetes Operator is usually a combination of a controller and a custom resource definition; however, the latter is not a requirement.
 Controllers are responsible for managing the custom resources.
 They are watching the Kubernetes API for changes in the custom resources, and act accordingly.
-Controllers are usually written in Go, and are compiled into a binary, but that is not a requirement. There are many libraries that can be used to write controllers in other languages, such as `kube-rs` for Rust, `KubeOps` for `.NET` and `Kopf` for Python.
+Controllers are usually written in Go, and are compiled into a binary, but that is not a requirement. There are many libraries that can be used to write controllers in other languages, such as `kube-rs`#cite(<kube-rs>) for Rust, `KubeOps` for `.NET` and `Kopf` for Python.
 
 If the controller is made specifically for Kubernetes it usually supports its own Custom Resource.
 Custom Resources are defined by Custom Resource Definitions (CRDs).
