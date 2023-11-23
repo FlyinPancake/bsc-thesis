@@ -1,4 +1,6 @@
 #import "@preview/big-todo:0.2.0": *
+#import "@preview/glossarium:0.2.4": make-glossary, print-glossary, gls, glspl 
+#show: make-glossary
 #set par(leading: 0.55em, first-line-indent: 1.8em, justify: true)
 // #show par: set block(spacing: 0.55em)
 #set text(font: "Times New Roman", size: 12pt)
@@ -33,3 +35,4 @@
   title: [List of Figures],
   target: figure.where(kind: image),
 )
+#include "pages/glossary.typ"

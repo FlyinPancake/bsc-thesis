@@ -1,4 +1,5 @@
 // LTeX: enabled=true
+#import "@preview/glossarium:0.2.4": make-glossary, print-glossary, gls, glspl 
 = Background and Related Work <background>
 
 == What are containers?
@@ -139,13 +140,6 @@ Kubernetes resources are the building blocks of Kubernetes applications.
 They are the basic unit of deployment, and they are used to define the application's environment.
 They are defined in YAML files, and can be created, updated, and deleted with the Kubernetes API.
 
-
-=== Deployments
-
-A Deployment is used to descirbe an application's lifecycle.
-It is a Resource, that creates and manages ReplicaSets.
-ReplicaSets are used to ensure that a specified number of pod replicas are running at any given time.
-
 ==== Pods
 
 A Pod is a Resource, that is the basic element of Kubernetes' workload.
@@ -204,9 +198,9 @@ Kubernetes comes with three (plus one) pre-defined namespaces#cite(<kube-docs>):
 People who run workloads on Kubernetes clusters often like to use automation to take care of repeatable tasks. The operator pattern captures how you can write code to automate a task beyond what Kubernetes itself provides.#cite(<kube-docs>)
 
 The operator pattern is a method for extending Kubernetes' functionality.
-With operators, we can extend Kubernetes' API with custom resources, and controllers.#cite(<kube-docs>)
+With operators, we can extend Kubernetes' API with @crd[s], and controllers#cite(<kube-docs>).
 This allows us to create custom resources, that can be managed by Kubernetes.
-For example, we can create a custom resource for a database, and a controller that will create a database pod when a database resource is created.
+For example, we can create a @crd for a database, and a controller that will create a database pod when a database resource is created.
 
 
 A Kubernetes Operator is usually a combination of a controller and a custom resource definition; however, the latter is not a requirement.
@@ -214,9 +208,9 @@ Controllers are responsible for managing the custom resources.
 They are watching the Kubernetes API for changes in the custom resources, and act accordingly.
 Controllers are usually written in Go, and are compiled into a binary, but that is not a requirement. There are many libraries that can be used to write controllers in other languages, such as `kube-rs`#cite(<kube-rs>) for Rust, `KubeOps` for `.NET` and `Kopf` for Python.
 
-If the controller is made specifically for Kubernetes it usually supports its own Custom Resource.
-Custom Resources are defined by Custom Resource Definitions (CRDs).
-CRDs are usually generated from the controller's source code.
+If the controller is made specifically for Kubernetes it usually ships with its own Custom Resource.
+Custom Resources are defined by @crd[s].
+They are usually generated from the controller's source code.
 They can be scoped to a namespace, or cluster-wide.
 This will depend on how the controller is implemented and what the use case is.
 
@@ -229,10 +223,11 @@ It provides `helm` charts for easy installation.
 === A Simple Kubernetes Deployment
 
 This is a simple Kubernetes deployment, that hosts a web application.
-This web application requires a database, which is hosted in a separate pod. 
+This web application requires a database, which is managed by a StatefulSet. 
 The database is deployed as two replicas, to ensure high availability. 
-Its data is stored in a persistent volume, which is mounted to the database pod.
-The web application is deployed as three replicas, to ensure high availability.
+Its data is stored in @persistentvolume[s], which is mounted to the database pod.
+Since our web application is stateless, it can be deployed as a Deployment.
+The Deployment ensures that the web application is always running, and it is scaled to three replicas.
 It is exposed to the outside world with an ingress, which is a Kubernetes resource that allows us to expose a service to the outside world.
 
 === Common Kubernetes Use Cases
@@ -342,3 +337,8 @@ When using OpenStack the maintainer has the option to split the installation int
 This allows for the creation of a dedicated project for each cluster, which can be used to isolate the different versions of the operator.
 
 This solution is not sufficient, since it removes the ability to dynamically scale the cluster, and the maintenance overhead is increased.
+
+=== How can vCluster help?
+
+Since the @crd[s]
+
