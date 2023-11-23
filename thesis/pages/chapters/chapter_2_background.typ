@@ -265,10 +265,10 @@ These resources are:
 
 ==== Scheduling
 
-By default vCluster uses the host cluster's scheduler to schedule pods.
+By default, vCluster uses the host cluster's scheduler to schedule pods.
 This is done to avoid the overhead of running a scheduler for each virtual cluster,
 however it introduces some limitations.
-1. Labeling nodes inside the virtual cluster has no effect on scheduling.
+1. Labelling nodes inside the virtual cluster has no effect on scheduling.
 2. Draining or tainting the nodes inside the virtual cluster has no effect on scheduling.
 3. Custom schedulers cannot be used.
 
