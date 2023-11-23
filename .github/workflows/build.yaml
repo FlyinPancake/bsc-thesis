@@ -19,11 +19,14 @@ jobs:
           unzip cascadiacode.zip -d /usr/share/fonts
           fc-cache -fv
 
-
-      - name: Typst
-        uses: lvignoli/typst-action@main
+      - name: Setup Typst
+        uses: yusancky/setup-typst@v2
+        id: setup-typst
         with:
-          source_file: thesis/main.typ
+          version: 'v0.9.0'
+
+      - name: Typst Compile
+        run: typst compile thesis/main.typ
 
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
