@@ -10,7 +10,12 @@
 #show heading: set block(above: 1.4em, below: 1em)
 #set page(
     paper: "a4",
-    margin: 3cm
+    margin: (
+      y: 2.5cm,
+      inside: 3.5cm,
+      outside: 2.5cm,
+    ),
+    
 )
 
 #page[
