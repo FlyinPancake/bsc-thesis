@@ -13,8 +13,8 @@ jobs:
       
       - name: "Install Required Fonts"
         run: |
-          curl -Lo merriweather.zip https://fonts.google.com/download?family=Merriweather
-          unzip merriweather.zip -d /usr/share/fonts
+          curl -Lo libre_baskerville.zip 'https://fonts.google.com/download?family=Libre%20Baskerville'
+          unzip libre_baskerville.zip -d /usr/share/fonts
           curl -Lo cascadiacode.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.0/CascadiaCode.zip
           unzip cascadiacode.zip -d /usr/share/fonts
           fc-cache -fv
@@ -25,7 +25,10 @@ jobs:
         with:
           version: 'v0.9.0'
           token: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Check Libre Baskerville font
+        run: typst fonts | grep -w '^Libre Baskerville$'
+      - name: Check CaskaydiaCove NF font
+        run: typst fonts | grep -w '^CaskaydiaCove NF$'
       - name: Typst Compile
         run: typst compile thesis/main.typ
 

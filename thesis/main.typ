@@ -3,10 +3,10 @@
 #show: make-glossary
 #set par(leading: 0.55em, first-line-indent: 1.8em, justify: true)
 // #show par: set block(spacing: 0.55em)
-#set text(font: "Merriweather", size: 11pt)
-#show raw: set text(font: "CaskaydiaCove NF")
+#set text(font: "Libre Baskerville", size: 10pt)
+#show raw: set text(font: "CaskaydiaCove NF", size: 1.3em)
 #set text(lang: "en", region: "GB")
-#show heading.where(level:1): set text(size: 24pt) 
+#show heading.where(level:1): set text(size: 2em) 
 #show heading: set block(above: 1.4em, below: 1em)
 #set page(
     paper: "a4",
