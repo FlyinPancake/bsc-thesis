@@ -255,7 +255,7 @@ They are scheduling workloads on the host cluster, however they have their own v
 vCluster is used in conjunction with `kubectl`, the Kubernetes CLI.
 It creates an alternative Kubernetes API server, that can be used with `kubectl`.
 When connected to the virtual cluster, `kubectl` will behave as if it was connected to a regular Kubernetes cluster.
-This is achieved by connecting to the API server of the virtual cluster control plane.
+This is achieved by connecting to the API server of the virtual cluster control plane #cite(<vcluster>).
 
 This control plane has high-level and low-level components.
 The high-level components only interact with the Kubernetes API, and do not have any knowledge of the host cluster. This includes, but is not limited to: Deployments, StatefulSets, and CustomResourceDefinitions.

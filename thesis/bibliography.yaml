@@ -34,6 +34,13 @@ vcluster:
     value: https://www.vcluster.com/docs/
     date: 2023-11-23
 
+stackoverflow-survey:
+  type: Web
+  title: "Stack Overflow Developer Survey 2023"
+  url:
+    value: https://survey.stackoverflow.co/2023
+    date: 2023-11-23
+
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix
