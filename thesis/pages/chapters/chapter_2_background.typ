@@ -156,6 +156,20 @@ A Pod models an application-specific "logical host": it contains one or more app
 Pods are usually created by a controller, such as a Deployment or a StatefulSet.
 These controllers are responsible for creating and managing the Pods.
 
+==== Deployments <deployment>
+
+A Deployment is used to descirbe an application's lifecycle.
+It is a Resource, that creates and manages ReplicaSets.
+ReplicaSets are used to ensure that a specified number of pod replicas are running at any given time.
+
+==== StatefulSets <sts>
+
+StatefulSets are similar to Deployments, however they are used for stateful applications.
+They are used to manage the deployment and scaling of a set of Pods, and provide guarantees about the ordering and uniqueness of these Pods.
+Like a Deployment, a StatefulSet manages Pods that are based on an identical container spec.
+Unlike a Deployment, a StatefulSet maintains a sticky identity for each of their Pods.
+
+
 ==== Services
 
 Services describe a method of accessing a set of Pods.
