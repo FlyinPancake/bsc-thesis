@@ -47,6 +47,7 @@ def run_pgbench(args: "List[str]", creds: PostgresCredentials):
         print(result.stderr.decode("utf-8"))
         return result
     except subprocess.CalledProcessError as e:
+        print(e.stderr.decode("utf-8"))
         raise Exception(f"Error running pgbench command: {e}")
 
 
@@ -118,18 +119,23 @@ def pgbench(
     ip: str,
     port: int,
     creds: PostgresCredentials,
+    select_only: bool = False,
 ) -> PgBenchResult:
+    pgbench_args = [
+        "-h",
+        ip,
+        "-p",
+        str(port),
+        f"--transactions={transactions}",
+        f"--jobs={therads_per_client}",
+        f"--client={clients}",
+    ]
+    if select_only:
+        pgbench_args.append("--select-only")
+
     result = (
         run_pgbench(
-            [
-                "-h",
-                ip,
-                "-p",
-                str(port),
-                f"--transactions={transactions}",
-                f"--jobs={therads_per_client}",
-                f"--client={clients}",
-            ],
+            pgbench_args,
             creds,
         )
         .stdout.decode("utf-8")

@@ -2,7 +2,6 @@
 
 import json
 import logging
-from pprint import pprint
 import subprocess
 
 from datetime import datetime
