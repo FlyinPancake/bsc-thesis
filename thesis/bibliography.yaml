@@ -41,6 +41,20 @@ stackoverflow-survey:
     value: https://survey.stackoverflow.co/2023
     date: 2023-11-23
 
+pgbench:
+  type: Web
+  title: "pgbench documentation"
+  url:
+    value: https://www.postgresql.org/docs/current/pgbench.html
+    accessed: 2023-12-01
+
+k3s:
+  type: Web
+  title: K3s docs
+  url:
+    value: https://docs.k3s.io/
+    accessed: 2023-12-03
+
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix
