@@ -656,6 +656,8 @@ version = "0.1.0"
 dependencies = [
  "color-eyre",
  "plotly",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

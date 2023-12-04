@@ -83,5 +83,14 @@ The replica pods can be used as a read-only database, and the main pod can be us
 By default, `pgbench` runs read-write commands, but
 `pgbench` has read-only as well as read-write modes.
 
+The output of `pgbench` contains the following metrics:
+- The number of transactions per second (TPS)
+- The average latency of a transaction
+- The initial latency of the connection
+
+The output includes the relevant configuration arguments of `pgbench`, such as the number of clients, the number of threads, and the scaling factor of the test database.
+I re-ran the tests for each scaling factor $10$ times, to eliminate the effect of random fluctuations.
+
+
 #import "@preview/big-todo:0.2.0": todo
 #todo[Add Kafka measurement planning]
