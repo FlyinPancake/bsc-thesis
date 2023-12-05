@@ -67,17 +67,18 @@ def get_master_node_ip(postgres_cluster_name: str) -> "Tuple[str, int]":
     # kubectl get pods -o jsonpath={.items..metadata.name} -l application=spilo,cluster-name=acid-minimal-cluster,spilo-role=master -n default
     pod = run_kubectl(f"get svc/{postgres_cluster_name}")
     return (
-        "localhost",
+        pod["spec"]["clusterIP"],
         pod["spec"]["ports"][0]["nodePort"],
     )
 
 
 def get_master_node_lb_ip(postgres_cluster_name: str) -> "Tuple[str, int]":
     # kubectl get pods -o jsonpath={.items..metadata.name} -l application=spilo,cluster-name=acid-minimal-cluster,spilo-role=master -n default
-    pod = run_kubectl(f"get svc/{postgres_cluster_name}")
+    service = run_kubectl(f"get svc/{postgres_cluster_name}")
+    pprint(service)
     return (
-        pod["status"]["loadBalancer"]["ingress"][0]["ip"],
-        pod["spec"]["ports"][0]["nodePort"],
+        service["status"]["loadBalancer"]["ingress"][0]["ip"],
+        service["spec"]["ports"][0]["nodePort"],
     )
 
 
