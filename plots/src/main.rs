@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::BufReader;
 
 use data::PostgresTestResult;
+use plotly::box_plot::BoxPoints;
 use plotly::common::{Mode, Title};
 use plotly::layout::{GridDomain, LayoutGrid};
 use plotly::{BoxPlot, Layout, Plot, Scatter};
@@ -106,20 +107,28 @@ fn host_vcluster_postgres_plot(
         Layout::new().title(Title::new("Read Write performance with unlocked resources"));
     rw.set_layout(rw_layout);
 
-    let host_rw_tps = host_data
+    let mut host_rw_tps = host_data
         .read_write
         .values()
         .map(|x| x.tps)
         .collect::<Vec<f64>>();
+    host_rw_tps.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let host_rw_tps = host_rw_tps[1..host_data.read_write.len() - 1].to_vec();
 
-    let host_rw_tps = BoxPlot::new(host_rw_tps).name("Host TPS");
-    let vcluster_rw_tps = vcluster_data
+    let host_rw_tps = BoxPlot::new(host_rw_tps)
+        .name("Host TPS")
+        .box_points(BoxPoints::SuspectedOutliers);
+    let mut vcluster_rw_tps = vcluster_data
         .read_write
         .values()
         .map(|x| x.tps)
         .collect::<Vec<f64>>();
+    vcluster_rw_tps.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let vcluster_rw_tps = vcluster_rw_tps[1..vcluster_data.read_write.len() - 1].to_vec();
     rw.add_trace(host_rw_tps);
-    let vcluster_rw_tps = BoxPlot::new(vcluster_rw_tps).name("Vcluster TPS");
+    let vcluster_rw_tps = BoxPlot::new(vcluster_rw_tps)
+        .name("Vcluster TPS")
+        .box_points(BoxPoints::SuspectedOutliers);
     rw.add_trace(vcluster_rw_tps);
     let host_rw_time = host_data
         .read_write

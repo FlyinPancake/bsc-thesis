@@ -250,15 +250,15 @@ It utilizes Kubernetes' namespaces feature, and improves on it.
 Compared to fully separate Kubernetes cluster, virtual clusters do not have their own node pool nor networking. Instead, they inherit these from the parent cluster.
 They are scheduling workloads on the host cluster, however they have their own virtual control plane.
 
-#figure(image("../../figures/vcluster-arch.excalidraw.svg"), caption: "vCluster Architecture") <vcluster-arch>
-=== vCluster Architecture
+#figure(image("../../figures/vcluster-arch.excalidraw.svg"), caption: "vCluster Architecture") <vcluster-arch-fig>
+=== vCluster Architecture <vcluster-arch-sec>
 
 vCluster is used in conjunction with `kubectl`, the Kubernetes CLI.
 It creates an alternative Kubernetes API server, that can be used with `kubectl`.
 When connected to the virtual cluster, `kubectl` will behave as if it was connected to a regular Kubernetes cluster.
 This is achieved by connecting to the API server of the virtual cluster control plane #cite(<vcluster>).
 
-As we can see in @vcluster-arch, this control plane has high-level and low-level components.
+As we can see in @vcluster-arch-fig, this control plane has high-level and low-level components.
 The high-level components only interact with the Kubernetes API, and do not have any knowledge of the host cluster. This includes, but is not limited to: Deployments, StatefulSets, and CustomResourceDefinitions.
 Low-level components on the other hand, have to interact with the host cluster. 
 To do this, they use the vCluster syncer, which copies the pods created in the virtual cluster to the host cluster.
@@ -348,7 +348,7 @@ This solution is not sufficient, since it removes the ability to dynamically sca
 === How can vCluster help?
 
 Since the @crd[s] can be scoped to cluster-wide or namespace-scoped, we cannot always use namespaces to isolate the different versions of the operator.
-However, vCluster considers the @crd[s] high-level components, as we have seen in @vcluster-arch and does not sync them to the host cluster.
+However, vCluster considers the @crd[s] high-level components, as we have seen in @vcluster-arch-fig and does not sync them to the host cluster.
 Since the @crd[s] are not synced to the host cluster, they do not appear in the host cluster, only in the virtual control plane.
 This leads to the conclusion, that the @crd[s] are isolated to the virtual cluster.
 
