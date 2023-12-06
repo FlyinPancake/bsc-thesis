@@ -20,6 +20,24 @@
     short: "OLM",
     long: "Operator Lifecycle Manager",
     desc: [The Operator Lifecycle Manager facilitates the management of operators in the Kubernetes Cluster.]
+  ),
+  (
+    key: "tps",
+    short: "TPS",
+    long: "Transactions Per Second",
+    desc: [Transactions per second (TPS) is an indication of how many database transactions a system can process per second.]
+  ),
+  (
+    key: "ro", 
+    short: "RO",
+    long: "Read Only",
+    desc: [A test is Read-only (RO) if it does not modify the state of the system under test.]
+  ),
+  (
+    key: "rw",
+    short: "R/W",
+    long: "Read/Write",
+    desc: [A test is Read/Write (R/W) if it modifies the state of the system under test.]
   )
 ))
 ]

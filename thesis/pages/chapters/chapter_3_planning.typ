@@ -52,7 +52,7 @@ Each machine has a single boot disk.
 The boot disk is a 160GB volume, which is more than enough for the operating system and the applications that are being tested.
 The boot disk is an SSD volume, which is the recommended volume type for boot disks in OpenStack.
 
-== PostgreSQL
+== Benchmarking PostgreSQL with `pgbench`
 
 Benchmarking PostgreSQL is done using `pgbench` #cite(<pgbench>).
 It runs a predefined set of commands on a PostgreSQL database and returns the most important metrics to the user.
@@ -60,7 +60,7 @@ It runs a predefined set of commands on a PostgreSQL database and returns the mo
 To use `pgbench` to benchmark PostgreSQL, we need to determine the size of the test data.
 `pgbench` has an initialization mode, which creates the test data.
 It accepts a parameter called `scale`, which determines the size of the test data. the default value is 1.
-When the value of `scale` is 1, the test database's contents look like this:
+When the value of `scale` is 1, the test database's structure is as follows in #ref(<pgbench-scale-1>).
 
 #figure(caption: [The contents of the test database when `scale` is $1$])[
   #table(
@@ -73,23 +73,33 @@ When the value of `scale` is 1, the test database's contents look like this:
     [`pgbench_accounts`], [$100000$],
     [`pgbench_history`], [$0$]  
   )
-]
+] <pgbench-scale-1>
 
-I wanted to test PostgreSQL with a larger database, so I used `pgbench`'s initialization mode to create a database with $100$ times more data.
+To simulate a larger PostgreSQL database, `pgbench`'s initialization mode can be utlilized to create a database with $100$ times more data.
+This is the `scale` parameter.
 
-I have planned on testing a PostgreSQL cluster with $3$ nodes. 
-These nodes are not simply PostgreSQL pods, but rather a main PostgreSQL pod and $2$ replica PostgreSQL pods.
-The replica pods can be used as a read-only database, and the main pod can be used as a read-write database.
+PostgreSQL can be hosted from a single node, but in production, it is always advised to use a cluster of PostgreSQL nodes.
+The most basic production-ready cluster is a cluster of $3$ nodes.
+We can see this in @postgres-cluster.
+These nodes are not simply PostgreSQL pods, but rather a main pod and $2$ replica pods.
+The data replication is not done by Kubernetes, but rather by PostgreSQL itself, using the streaming replication feature #cite(<postgres-replication>).
+We cannot commit changes to the replica pods, but we can read from them, so they can be useful as read-caches too beside redundancy.
+If for whatever reason the main pod fails, one of the replica pods can be promoted to be the main pod.
+
+#figure(caption: [PostgreSQL cluster with a main pod and two replica pods])[
+  #image("../../figures/postgres-cluster.excalidraw.svg", width: 80%)
+] <postgres-cluster>
+
 By default, `pgbench` runs read-write commands, but
-`pgbench` has read-only as well as read-write modes.
-
+`pgbench` has read-only mode as well.
+This means that we can run the read-only commands on the replica pods, and the read-write commands on the main pod.
 The output of `pgbench` contains the following metrics:
 - The number of transactions per second (TPS)
 - The average latency of a transaction
 - The initial latency of the connection
 
 The output includes the relevant configuration arguments of `pgbench`, such as the number of clients, the number of threads, and the scaling factor of the test database.
-I re-ran the tests for each scaling factor $10$ times, to eliminate the effect of random fluctuations.
+
 
 
 #import "@preview/big-todo:0.2.0": todo

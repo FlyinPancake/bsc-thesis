@@ -113,11 +113,12 @@ Some notable examples are:
 - `kubespray` -- Production ready Kubernetes installer by the Kubernetes project
 - `rke` -- Rancher Kubernetes Engine by Rancher Labs
 
-#figure(image("../../figures/kubernetes-arch.excalidraw.svg"), caption: "Kubernetes Architecture")
+#figure(image("../../figures/kubernetes-arch.excalidraw.svg"), caption: "Kubernetes Architecture") <k8s-arch>
 === Kubernetes Components
 
-A Kubernetes cluster is built from building blocks with stable interfaces. 
-It has separate control plane, and worker processes. 
+A Kubernetes cluster is built from building blocks with stable interfaces.
+An example "default" Kubernetes cluster's logical components can be seen in @k8s-arch.
+We can see, that Kubernets has separate control plane, and worker processes.
 
 The control plane is responsible for the global, cluster-scoped decisions (i.e.: scheduling)
 as well as detecting and acting on cluster events (i.e.: creating a new pod when a deployment's `replicas` field requires it). 
@@ -219,10 +220,10 @@ It is maintained by Red Hat, and is a part of the Operator Lifecycle Manager (OL
 OperatorHub is a great place to find operators for common use cases, such as databases, message queues, and monitoring solutions.
 It provides `helm` charts for easy installation.
 
-#figure(image("../../figures/kubernetes-deployment-example.excalidraw.svg"), caption: "Simple Kubernetes Deployment")
+#figure(image("../../figures/kubernetes-deployment-example.excalidraw.svg"), caption: "Simple Kubernetes Deployment") <k8s-deployment>
 === A Simple Kubernetes Deployment
 
-This is a simple Kubernetes deployment, that hosts a web application.
+In @k8s-deployment we can see a simple Kubernetes deployment, that hosts a web application.
 This web application requires a database, which is managed by a StatefulSet. 
 The database is deployed as two replicas, to ensure high availability. 
 Its data is stored in @persistentvolume[s], which is mounted to the database pod.
@@ -257,7 +258,7 @@ It creates an alternative Kubernetes API server, that can be used with `kubectl`
 When connected to the virtual cluster, `kubectl` will behave as if it was connected to a regular Kubernetes cluster.
 This is achieved by connecting to the API server of the virtual cluster control plane #cite(<vcluster>).
 
-This control plane has high-level and low-level components.
+As we can see in @vcluster-arch, this control plane has high-level and low-level components.
 The high-level components only interact with the Kubernetes API, and do not have any knowledge of the host cluster. This includes, but is not limited to: Deployments, StatefulSets, and CustomResourceDefinitions.
 Low-level components on the other hand, have to interact with the host cluster. 
 To do this, they use the vCluster syncer, which copies the pods created in the virtual cluster to the host cluster.

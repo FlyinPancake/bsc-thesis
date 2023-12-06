@@ -55,6 +55,13 @@ k3s:
     value: https://docs.k3s.io/
     accessed: 2023-12-03
 
+postgres-replication:
+  type: Web
+  title: PostgreSQL Replication
+  url:
+    value: https://www.postgresql.org/docs/15/runtime-config-replication.html
+    accessed: 2023-11-20
+
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix
