@@ -95,7 +95,9 @@ class InitializeDbResult:
 def initialize_db(
     scaling: int, ip: str, port: int, creds: PostgresCredentials
 ) -> InitializeDbResult:
-    result = run_pgbench(["-i", "-h", ip, "-p", str(port), "-s", str(scaling)], creds)
+    result = run_pgbench(
+        ["-i", "-h", ip, "-p", str(port), "-s", str(scaling), "--no-vacuum"], creds
+    )
 
     performance_data = result.stderr.decode("utf-8").split("\n")[-2]
     # print(performance_data)
@@ -105,8 +107,8 @@ def initialize_db(
         drop_tables=float(matches[1]),
         create_tables=float(matches[2]),
         client_side_generate=float(matches[3]),
-        vacuum=float(matches[4]),
-        primary_keys=float(matches[5]),
+        vacuum=float(-1),
+        primary_keys=float(matches[4]),
     )
     return result
 

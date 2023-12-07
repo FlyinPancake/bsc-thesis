@@ -1,0 +1,214 @@
+{
+    "initialize": {
+        "done_in": 46.74,
+        "drop_tables": 0.07,
+        "create_tables": 0.05,
+        "client_side_generate": 27.79,
+        "vacuum": -1.0,
+        "primary_keys": 18.83
+    },
+    "read-write": {
+        "0": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 71.482,
+            "initial_connection_time": 169.841,
+            "tps": 69.948055,
+            "time": 71.9279088973999
+        },
+        "1": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 57.955,
+            "initial_connection_time": 57.461,
+            "tps": 86.27428,
+            "time": 58.06983423233032
+        },
+        "2": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 62.109,
+            "initial_connection_time": 67.831,
+            "tps": 80.503247,
+            "time": 62.26298689842224
+        },
+        "3": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 57.826,
+            "initial_connection_time": 53.525,
+            "tps": 86.466796,
+            "time": 57.953789949417114
+        },
+        "4": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 95.403,
+            "initial_connection_time": 63.626,
+            "tps": 52.40942,
+            "time": 95.53458213806152
+        },
+        "5": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 92.452,
+            "initial_connection_time": 63.146,
+            "tps": 54.08195,
+            "time": 92.58191466331482
+        },
+        "6": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 91.193,
+            "initial_connection_time": 71.729,
+            "tps": 54.828495,
+            "time": 91.4095869064331
+        },
+        "7": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 194.38,
+            "initial_connection_time": 63.028,
+            "tps": 25.722783,
+            "time": 194.70477485656738
+        },
+        "8": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 142.703,
+            "initial_connection_time": 109.857,
+            "tps": 35.037849,
+            "time": 143.1612193584442
+        },
+        "9": {
+            "scaling_factor": 50,
+            "number_of_clients": 5,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 211.616,
+            "initial_connection_time": 59.852,
+            "tps": 23.627699,
+            "time": 211.73279690742493
+        }
+    },
+    "read-only": {
+        "0": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.668,
+            "initial_connection_time": 244.137,
+            "tps": 37440.394891,
+            "time": 0.9659156799316406
+        },
+        "1": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.614,
+            "initial_connection_time": 272.221,
+            "tps": 40718.336607,
+            "time": 0.9350357055664062
+        },
+        "2": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.633,
+            "initial_connection_time": 288.175,
+            "tps": 39463.922082,
+            "time": 0.9747838973999023
+        },
+        "3": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.628,
+            "initial_connection_time": 279.568,
+            "tps": 39829.085429,
+            "time": 0.9556026458740234
+        },
+        "4": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.687,
+            "initial_connection_time": 271.144,
+            "tps": 36396.512341,
+            "time": 1.0088410377502441
+        },
+        "5": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.735,
+            "initial_connection_time": 291.06,
+            "tps": 34024.159875,
+            "time": 1.088202714920044
+        },
+        "6": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.618,
+            "initial_connection_time": 254.156,
+            "tps": 40483.863132,
+            "time": 0.92098069190979
+        },
+        "7": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.768,
+            "initial_connection_time": 331.374,
+            "tps": 32551.744253,
+            "time": 1.1554534435272217
+        },
+        "8": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.582,
+            "initial_connection_time": 255.356,
+            "tps": 42945.438679,
+            "time": 0.883798360824585
+        },
+        "9": {
+            "scaling_factor": 50,
+            "number_of_clients": 25,
+            "number_of_threads": 1,
+            "number_of_transactions_per_client": 1000,
+            "latency_average": 0.61,
+            "initial_connection_time": 251.431,
+            "tps": 41004.243119,
+            "time": 0.9094078540802002
+        }
+    }
+}

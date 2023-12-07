@@ -46,7 +46,9 @@ def do_test(
     results["read-write"] = {}
     for i in alive_it(range(10)):
         start_time = time.time()
-        bench_result = pgbench(10, 1, 1000, master_node_ip, master_node_port, creds)
+        bench_result = pgbench(
+            int(scale / 10), 1, 1000, master_node_ip, master_node_port, creds
+        )
         results["read-write"][i] = dataclasses.asdict(bench_result)
         results["read-write"][i]["time"] = time.time() - start_time
 
@@ -54,7 +56,13 @@ def do_test(
     for i in alive_it(range(10)):
         start_time = time.time()
         bench_result = pgbench(
-            20, 1, 1000, replica_node_ip, replica_node_port, creds, select_only=True
+            int(scale / 2),
+            1,
+            1000,
+            replica_node_ip,
+            replica_node_port,
+            creds,
+            select_only=True,
         )
         results["read-only"][i] = dataclasses.asdict(bench_result)
         results["read-only"][i]["time"] = time.time() - start_time
@@ -77,12 +85,13 @@ if __name__ == "__main__":
     creds = get_password_secret("test_user", "test_postgres")
     # master_node_ip = "10.1.65.102"
     test_scales = [10, 20, 50, 100, 200]
-
-    do_test(
-        master_node_ip=master_node_ip,
-        master_node_port=master_node_port,
-        creds=creds,
-        replica_node_port=replica_node_port,
-        replica_node_ip=replica_node_ip,
-        scale=200,
-    )
+    for scale in test_scales:
+        print(f"🧪 Running test with scale {scale}")
+        do_test(
+            master_node_ip=master_node_ip,
+            master_node_port=master_node_port,
+            creds=creds,
+            replica_node_port=replica_node_port,
+            replica_node_ip=replica_node_ip,
+            scale=scale,
+        )
