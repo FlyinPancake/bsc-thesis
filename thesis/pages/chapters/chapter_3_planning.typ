@@ -142,7 +142,7 @@ and `pgbench` on the controller node.
 #import "@preview/big-todo:0.2.0": todo
 #todo[Add Kafka measurement planning]
 
-== Functionality Testing -- CRD coflict
+== Functionality Testing -- CRD coflict <crd-conflict-planning>
 
 As indicated in the context of @version-conflict-sec, version conflicts may
 arise when attempting to apply two distinct versions of the same @crd to a
@@ -165,7 +165,36 @@ with the same @crd[s] applied to separate virtual clusters, and observe the
 resulting behavior. We will then compare the two results, and determine whether
 the virtual cluster approach is effective in addressing version conflicts.
 
-In the first case, we expect the cluster to update the @crd to the latest
-version and overwrite the previous version. In the second case, we expect the
-the two @crd[s] to be applied successfully, as they are applied to separate
-clusters.
+
+In @test-crd we can observe the important metadata and spec fields of the 
+@crd which will be used for testing. We intend to replace the `v1` version
+with `v2` in the second @crd, and then attempt to apply both @crd[s] to the 
+same cluster. We will then repeat this process with the same @crd[s] applied
+to separate virtual clusters.
+
+#figure([```yaml
+  apiVersion: apiextensions.k8s.io/v1
+  kind: CustomResourceDefinition
+  metadata:
+    name: pdfdocument.k8s.palvolgyid.tmit.bme.hu
+  spec:
+    group: k8s.palvolgyid.tmit.bme.hu
+    scope: Cluster
+    versions:
+      - name: v1
+      # or
+      - name: v2
+      ...
+  ```], caption: [The contents of the test @crd]) <test-crd>
+
+In the first case, we expect the cluster to apply the first @crd, and then
+reject the second @crd, due to it not supporting `v1`. In the second case,
+we expect the cluster to apply both @crd[s], as they are applied to separate
+virtual clusters. We will then verify the presence of both @crd[s] in the
+cluster, and confirm that they are indeed separate versions.
+
+This test will not be concerned with the functionality of the @crd[s] themselves,
+but rather with the behavior of the cluster when presented with conflicting
+@crd[s]. As such, we will not be testing the functionality of the @crd[s]
+themselves, but rather the behavior of the cluster when presented with
+conflicting @crd[s].

@@ -133,7 +133,50 @@ cluster and the host cluster.
 
 == Functionality Testing -- CRD conflict
 
-In this section, we will evaluate the functionality of `vcluster` by testing
-whether it can solve the @crd version conflict problem. We will not use a @crd
-that corresponds to any current application, but rather a @crd that is minimal
-and easy to understand.
+In this section, we aim to assess the efficacy of `vcluster` in resolving the 
+@crd version conflict issue. For this evaluation, we will utilize the @crd 
+outlined in @crd-conflict-planning—a straightforward @crd designed to 
+accommodate a single version. Our objective is to attempt the application 
+of both versions of the @crd to a common host cluster.
+
+The initial application of the first @crd version proves successful. 
+However, encountering an error, as indicated in @crd-version-error,
+prevents the successful application of the second version.
+This scenario prompts further investigation into the capabilities of 
+`vcluster` to effectively manage and reconcile conflicting @crd versions
+within the host cluster.
+#figure(caption: [Applying two versions of the same @crd to the same host cluster])[
+  ```
+  The CustomResourceDefinition "pdfdocument.k8s.palvolgyid.tmit.bme.hu" is invalid: status.storedVersions[0]: Invalid value: "v1": must appear in spec.versions
+  ```
+] <crd-version-error>
+The anticipated outcome is aligned with the host cluster's inability to
+support the application of multiple versions of the same @crd.
+To further explore this, we will create a virtual cluster and examine
+the feasibility of applying both versions of the @crd within the virtual cluster.
+
+Two distinct `vcluster` instances, denoted as `pdf-v1` and `pdf-v2`,
+will be established, each corresponding to a different @crd version.
+Both virtual cluster instances will share the same host cluster.
+Following this, connections to the virtual clusters will be established,
+and the respective @crd versions will be applied. In this instance, 
+both versions are successfully applied. Subsequently, we will verify
+the @crd versions within their respective virtual clusters, as depicted
+in @crd-version-check.
+#figure(caption: [Checking the @crd versions in the virtual clusters])[
+  ```sh
+  $ kubectl get crd pdfdocument.k8s.palvolgyid.tmit.bme.hu -o custom-columns=NAME:.metadata.name,VERSION:.spec.versions[*].name
+  # pdf-v1
+  NAME                                      VERSION
+  pdfdocument.k8s.palvolgyid.tmit.bme.hu    v1 
+  # pdf-v2
+  NAME                                      VERSION
+  pdfdocument.k8s.palvolgyid.tmit.bme.hu    v2
+  ```
+] <crd-version-check>
+
+We can see that both versions of the @crd are present in their respective
+virtual clusters. This solution is not perfect, as we still can not use both
+versions from a single cluster. However this can be a viable solution for 
+some applications where the two versions are not used together.
+
