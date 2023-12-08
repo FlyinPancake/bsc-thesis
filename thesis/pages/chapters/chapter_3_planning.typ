@@ -141,3 +141,31 @@ and `pgbench` on the controller node.
 
 #import "@preview/big-todo:0.2.0": todo
 #todo[Add Kafka measurement planning]
+
+== Functionality Testing -- CRD coflict
+
+As indicated in the context of @version-conflict-sec, version conflicts may
+arise when attempting to apply two distinct versions of the same @crd to a
+shared cluster. Such situations can materialize when two different applications
+rely on the same @crd, albeit with incompatible versions. While this is
+typically not problematic, as the majority of @crd[s] are scoped to a specific
+namespace, challenges may arise when the relevant @crd is designated as
+cluster-scoped.
+
+As outlined in @vcluster-version-conflict-sec, it appears that vcluster
+possesses the capability to address such conflicts by segregating conflicting
+applications into distinct virtual clusters. This functionality however, has not
+been formally documented nor verified. Our objective is to confirm the presence
+and effectiveness of this functionality through producing a proof of concept.
+
+Our proof of concept will consist of two distinct @crd[s], each with a
+conflicting version. We will then attempt to apply both @crd[s] to a shared
+cluster, and observe the resulting behavior. We will then repeat this process
+with the same @crd[s] applied to separate virtual clusters, and observe the
+resulting behavior. We will then compare the two results, and determine whether
+the virtual cluster approach is effective in addressing version conflicts.
+
+In the first case, we expect the cluster to update the @crd to the latest
+version and overwrite the previous version. In the second case, we expect the
+the two @crd[s] to be applied successfully, as they are applied to separate
+clusters.

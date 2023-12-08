@@ -28,5 +28,6 @@
 #counter(page).update(1)
 #include "pages/bibliography.typ"
 #pagebreak()
-#outline(title: [List of Figures], target: figure.where(kind: image))
+= List of Figures
+#outline(title: none, target: figure.where(kind: image))
 #include "pages/glossary.typ"

@@ -130,3 +130,10 @@ In @pgbench-sec we introduced `pgbench` and its ability to scale the benchmark
 database. We will now use this feature to measure the performance of PostgreSQL
 with different scales. We will use the same scale factors for the virtual
 cluster and the host cluster.
+
+== Functionality Testing -- CRD conflict
+
+In this section, we will evaluate the functionality of `vcluster` by testing
+whether it can solve the @crd version conflict problem. We will not use a @crd
+that corresponds to any current application, but rather a @crd that is minimal
+and easy to understand.
