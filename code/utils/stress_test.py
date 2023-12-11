@@ -47,7 +47,7 @@ def do_test(
     for i in alive_it(range(10)):
         start_time = time.time()
         bench_result = pgbench(
-            int(scale / 10), 1, 1000, master_node_ip, master_node_port, creds
+            int(scale / 5), 1, 10000, master_node_ip, master_node_port, creds
         )
         results["read-write"][i] = dataclasses.asdict(bench_result)
         results["read-write"][i]["time"] = time.time() - start_time
