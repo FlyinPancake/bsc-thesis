@@ -43,7 +43,7 @@ aggregation of 10 `pgbench` runs with the same parameters, excluding the lowest
 and highest values.
 
 The left side of the graph displays the individual @tps values, while the right
-side showcases the boxplot representation of the data. With 10 measurements, we
+side showcases the box plot representation of the data. With 10 measurements, we
 can estimate the @tps values with a certain level of confidence.
 
 In the same test run, we also measured the performance of read-only (@ro)
@@ -124,13 +124,78 @@ writing @persistentvolume[s] than reading them.
   #image("/figures/plots/postgres/limited/ro.svg", width: 100%)
 ] <ro-limits>
 
-=== Measuring with different scales
+=== Measurement with different scales
 
 In @pgbench-sec we introduced `pgbench` and its ability to scale the benchmark
 database. We will now use this feature to measure the performance of PostgreSQL
 with different scales. We will use the same scale factors for the virtual
 cluster and the host cluster.
 
+As discussed in the context of @pgbench-performance-analysis, a battery of tests was conducted across scale factors (@sf[s]) ranging from $10$ to $200$.
+The ensuing section aims to present the outcomes of these tests. Notably, at
+the lower scale factors, there is an observable alternation in performance
+between the virtual cluster and the host cluster. Although this fluctuation is
+attributed to statistical noise, it is evident that no substantive distinctions
+are discernible between the two deployment methodologies.
+
+In the subsequent segment, identified as @sf10rw-fig, the ratios of transaction
+per second (@tps) values are juxtaposed with the baseline, albeit reflecting
+relatively diminished values. It is pertinent to highlight that the host 
+cluster consistently outperforms the virtual cluster. This performance contrast 
+could plausibly be ascribed to the necessity for disk input/output (IO) to 
+traverse the syncer in the virtual cluster configuration.
+
+#figure(caption: [@rw performance for @sf=10], image("/figures/plots/postgres/scales/rw_10.svg", width: 100%) ) <sf10rw-fig>
+
+Likewise, in the context of @sf10ro-fig, a discernible trend emerges wherein 
+the transaction per second (@tps) values for read-only (@ro) operations surpass 
+those observed in @sf10rw-fig. This outcome aligns with expectations since @ro 
+tests exclude write operations to the disk. Notably, despite the reduced 
+scaling factor, noteworthy enhancements in @tps values are evident compared to 
+the baseline (with a scale factor of $100$). This enhancement can be attributed 
+to optimizations implemented in the scaled tests, where the number of clients 
+was proportionally adjusted to complement the scale factor, as elucidated in 
+@pgbench-performance-analysis.
+
+Furthermore, with these optimizations, a convergence is observed between the 
+means and medians, with minimal discernible differences within the margin of 
+error. Variability patterns are also comparable, albeit with a slightly higher 
+variability observed in the host cluster. This divergence is postulated to stem 
+from both clusters being capable of delivering the maximum allocation of 
+resources to the database.
+
+#figure(caption: [@ro performance for @sf=10], image("/figures/plots/postgres/scales/ro_10.svg", width: 100%) ) <sf10ro-fig>
+
+Advancing through the scale factors, we turn attention to @sf = 50 as depicted 
+in @sf50rw-fig. A conspicuous trend emerges where the @tps values witness a 
+notable increment of $100$. This increment aligns with expectations, attributed to the heightened presence of parallel workers and a greater volume of database 
+rows in comparison to the scenario illustrated in @sf = 10, as discussed 
+earlier.
+
+Relative to the observations in @sf10rw-fig, it becomes apparent that the 
+disparities in both means and medians experience a proportional augmentation. 
+This indicative rise underscores that the variability in @tps values is 
+concurrently expanding.
+
+
+#figure(caption: [@rw performance for @sf=50], image("/figures/plots/postgres/scales/rw_50.svg", width: 100%) ) <sf50rw-fig>
+
+Turning our attention to @sf50ro-fig, we observe a higher @tps score for
+the virtual cluster compared to the host cluster. This is a surprising
+result, as the virtual cluster is expected to be slower than the host
+cluster. However, multiple re-runs of this scenario indicate higher performance 
+inside the vcluster. 
+
+
+#figure(caption: [@ro performance for @sf=50], image("/figures/plots/postgres/scales/ro_50.svg", width: 100%) ) <sf50ro-fig>
+
+#figure(caption: [@rw performance for @sf=100], image("/figures/plots/postgres/scales/rw_100.svg", width: 100%) ) <sf100rw-fig>
+
+#figure(caption: [@ro performance for @sf=100], image("/figures/plots/postgres/scales/ro_100.svg", width: 100%) ) <sf100ro-fig>
+
+#figure(caption: [@rw performance for @sf=200], image("/figures/plots/postgres/scales/rw_200.svg", width: 100%) ) <sf200rw-fig>
+
+#figure(caption: [@ro performance for @sf=200], image("/figures/plots/postgres/scales/ro_200.svg", width: 100%) ) <sf200ro-fig>
 == Functionality Testing -- CRD conflict
 
 In this section, we aim to assess the efficacy of `vcluster` in resolving the 
@@ -177,6 +242,6 @@ in @crd-version-check.
 
 We can see that both versions of the @crd are present in their respective
 virtual clusters. This solution is not perfect, as we still can not use both
-versions from a single cluster. However this can be a viable solution for 
+versions from a single cluster. However, this can be a viable solution for 
 some applications where the two versions are not used together.
 

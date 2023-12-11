@@ -1,1 +1,3 @@
-#bibliography("../bibliography.yaml", style: "ieee")
+#page[
+  #bibliography("../bibliography.yaml", style: "ieee")
+]

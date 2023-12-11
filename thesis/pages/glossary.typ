@@ -38,6 +38,12 @@
     short: "R/W",
     long: "Read/Write",
     desc: [A test is Read/Write (R/W) if it modifies the state of the system under test.]
+  ),
+  (
+    key: "sf", 
+    short: "SF",
+    long: "Scale Factor",
+    desc: [The scale factor (SF) is the ratio of the size of a data set to the size of its original source data set.]
   )
 ))
 ]

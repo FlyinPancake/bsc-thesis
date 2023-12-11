@@ -1,9 +1,10 @@
 use std::fs::File;
 use std::io::BufReader;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use plotly::box_plot::{BoxMean, BoxPoints};
-use plotly::layout::{GridDomain, LayoutGrid};
+use plotly::common::Title;
+use plotly::layout::{Axis, GridDomain, LayoutGrid};
 use plotly::{BoxPlot, Layout, Plot};
 use rayon::prelude::*;
 
@@ -12,37 +13,40 @@ use data::PostgresTestResult;
 
 fn main() -> color_eyre::Result<()> {
     // baseline_graphs()?;
-    let pgbench_host_paths: Vec<PostgresTestResult> = [
-        "../code/test_results/host_cluster_postgres_test_10_2023-12-06T20:22:53.679745.json",
-        "../code/test_results/host_cluster_postgres_test_20_2023-12-06T20:36:27.120067.json",
-        "../code/test_results/host_cluster_postgres_test_50_2023-12-06T20:55:23.185226.json",
-        "../code/test_results/host_cluster_postgres_test_100_2023-12-06T21:54:54.953488.json",
-        "../code/test_results/host_cluster_postgres_test_200_2023-12-06T23:52:25.117546.json",
-    ]
-    .into_par_iter()
-    .map(PathBuf::from)
-    .map(|pb| {
-        let reader = BufReader::new(File::open(pb).unwrap());
-        let data: PostgresTestResult = serde_json::from_reader(reader).unwrap();
-        data
-    })
-    .collect();
+    let pgbench_host_paths = [
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_10_2023-12-07T15:30:48.276825.json",
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_20_2023-12-07T16:34:49.250646.json",
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_50_2023-12-07T18:15:52.635879.json",
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_100_2023-12-07T21:19:47.730306.json",
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_200_2023-12-08T04:33:11.296866.json",
+    ];
+    let pgbench_vcluster_paths = [
+        "../code/test_results/pgtest_run_2/vcluster_postgres_test_10_2023-12-08T10:49:21.739420.json",
+        "../code/test_results/pgtest_run_2/vcluster_postgres_test_20_2023-12-08T11:56:45.050519.json",
+        "../code/test_results/pgtest_run_2/vcluster_postgres_test_50_2023-12-08T13:45:23.802124.json",
+        "../code/test_results/pgtest_run_2/vcluster_postgres_test_100_2023-12-08T17:07:10.443653.json",
+        "../code/test_results/pgtest_run_2/vcluster_postgres_test_200_2023-12-09T02:01:23.375601.json",
+    ];
 
-    let pgbench_vcluster_paths: Vec<PostgresTestResult> = [
-        "../code/test_results/vcluster_postgres_test_10_2023-12-07T09:33:24.137676.json",
-        "../code/test_results/vcluster_postgres_test_20_2023-12-07T09:37:58.228414.json",
-        "../code/test_results/vcluster_postgres_test_50_2023-12-07T09:47:45.619295.json",
-        "../code/test_results/vcluster_postgres_test_100_2023-12-07T10:04:11.921415.json",
-        "../code/test_results/vcluster_postgres_test_200_2023-12-07T10:43:43.057250.json",
-    ]
-    .into_par_iter()
-    .map(PathBuf::from)
-    .map(|pb| {
-        let reader = BufReader::new(File::open(pb).unwrap());
-        let data: PostgresTestResult = serde_json::from_reader(reader).unwrap();
-        data
-    })
-    .collect();
+    let pgbench_host_paths: Vec<PostgresTestResult> = pgbench_host_paths
+        .into_par_iter()
+        .map(PathBuf::from)
+        .map(|pb| {
+            let reader = BufReader::new(File::open(pb).unwrap());
+            let data: PostgresTestResult = serde_json::from_reader(reader).unwrap();
+            data
+        })
+        .collect();
+
+    let pgbench_vcluster_paths: Vec<PostgresTestResult> = pgbench_vcluster_paths
+        .into_par_iter()
+        .map(PathBuf::from)
+        .map(|pb| {
+            let reader = BufReader::new(File::open(pb).unwrap());
+            let data: PostgresTestResult = serde_json::from_reader(reader).unwrap();
+            data
+        })
+        .collect();
 
     pgbench_host_paths
         .into_par_iter()
@@ -65,6 +69,11 @@ fn main() -> color_eyre::Result<()> {
                 .box_points(BoxPoints::False)
                 .box_mean(BoxMean::True);
             let mut rw = Plot::new();
+            let rw_layout = Layout::new()
+                // .title(Title::new("Read Write performance with unlocked resources"))
+                .y_axis(Axis::new().title(Title::new("Transactions per second")))
+                .show_legend(false);
+            rw.set_layout(rw_layout);
             rw.add_trace(host_rw_tps);
             rw.add_trace(vcluster_rw_tps);
             rw.write_image(
@@ -79,6 +88,10 @@ fn main() -> color_eyre::Result<()> {
             );
 
             let mut ro = Plot::new();
+            let ro_layout = Layout::new()
+                .y_axis(Axis::new().title(Title::new("Transactions per second")))
+                .show_legend(false);
+            ro.set_layout(ro_layout);
             let mut host_ro_tps: Vec<f64> =
                 host_cluster.read_only.values().map(|x| x.tps).collect();
             host_ro_tps.sort_by(|a, b| a.partial_cmp(b).unwrap());

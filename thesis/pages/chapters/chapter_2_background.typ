@@ -297,8 +297,8 @@ responsible for managing the custom resources. They are watching the Kubernetes
 API for changes in the custom resources, and act accordingly. Controllers are
 usually written in Go, and are compiled into a binary, but that is not a
 requirement. There are many libraries that can be used to write controllers in
-other languages, such as `kube-rs`#cite(<kube-rs>) for Rust, `KubeOps` for
-`.NET` and `Kopf` for Python.
+other languages, such as `kube-rs`#cite(<kube-rs>) for Rust, `KubeOps`@kubeops 
+for `.NET` and `Kopf`@kopf for Python.
 
 If the controller is made specifically for Kubernetes it usually ships with its
 own Custom Resource. Custom Resources are defined by @crd[s]. They are usually
@@ -306,9 +306,9 @@ generated from the controller's source code. They can be scoped to a namespace,
 or cluster-wide. This will depend on how the controller is implemented and what
 the use case is.
 
-The most common Kubernetes Operators can be found in the OperatorHub#footnote[https://operatorhub.io/],
+The most common Kubernetes Operators can be found in the OperatorHub@operatorhub,
 which is a registry of operators. It is maintained by Red Hat, and is a part of
-the Operator Lifecycle Manager (OLM) [#ref(<olm-section>)]. OperatorHub is a
+the @olm [#ref(<olm-section>)]. OperatorHub is a
 great place to find operators for common use cases, such as databases, message
 queues, and monitoring solutions. It provides `helm` charts for easy
 installation.

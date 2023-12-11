@@ -6,6 +6,13 @@
 # https://github.com/typst/hayagriva/blob/main/tests/basic.yml
 # yaml-language-server: $schema=
 
+apache-2:
+  type: Web
+  title: Apache License, Version 2.0
+  url:
+    value: https://www.apache.org/licenses/LICENSE-2.0
+    date: 2023-12-10
+
 kuberntes-wikipedia:
   type: Web
   title: Kubernetes
@@ -25,6 +32,27 @@ kube-rs:
   title: "kube-rs"
   url:
     value: https://kube.rs/
+    date: 2023-11-23
+
+kubeops:
+  type: Web
+  title: "KubeOps"
+  url:
+    value: https://www.nuget.org/packages/KubeOps/
+    date: 2023-11-23
+
+kopf:
+  type: Web
+  title: "Kopf"
+  url:
+    value: https://kopf.readthedocs.io/en/stable/
+    date: 2023-11-23
+
+operatorhub:
+  type: Web
+  title: "OperatorHub.io"
+  url:
+    value: https://operatorhub.io/
     date: 2023-11-23
 
 vcluster:
@@ -61,6 +89,14 @@ postgres-replication:
   url:
     value: https://www.postgresql.org/docs/15/runtime-config-replication.html
     accessed: 2023-11-20
+
+vcluster-github:
+  type: repository
+  title: "vcluster GitHub repository"
+  serial-number: v0.17.1
+  url:
+    value: https://github.com/loft-sh/vcluster
+    accessed: 2023-11-23
 
 harry:
   type: Book

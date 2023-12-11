@@ -118,7 +118,7 @@ The output includes the relevant configuration arguments of `pgbench`, such as
 the number of clients, the number of threads, and the scaling factor of the test
 database.
 
-=== Performance Analysis
+=== Performance Analysis <pgbench-performance-analysis>
 
 Through the application of scaling, we can effectively emulate a larger
 database. Leveraging this scaling factor, we intend to assess the performance of
