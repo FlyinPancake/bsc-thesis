@@ -1,6 +1,6 @@
+use clap::Parser;
 use hdrhistogram::Histogram;
 
-use kafka::producer;
 use rdkafka::{
     admin::{AdminClient, NewTopic, TopicReplication},
     consumer::{Consumer, StreamConsumer},
@@ -11,18 +11,35 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 
+#[derive(Debug, Parser)]
+struct Cli {
+    #[clap(short, long)]
+    broker: String,
+    #[clap(short, long)]
+    topic: String,
+    #[clap(short, long, default_value = "10")]
+    warmup: u64,
+    #[clap(short = 'D', long, default_value = "50")]
+    test_duration: u64,
+    #[clap(short, long, default_value = "1024")]
+    data_size: usize,
+    #[clap(short, long, default_value = "1")]
+    producers: u64,
+    #[clap(short, long, default_value = "1")]
+    consumers: u64,
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::Subscriber::builder()
         .with_env_filter(
-            EnvFilter::from_default_env().add_directive("kafka_tester=trace".parse().unwrap()),
+            EnvFilter::from_default_env().add_directive("kafka_benchmark=trace".parse().unwrap()),
         )
         .init();
 
-    info!("Hello, world!");
-
-    let broker = "localhost:9093".to_string();
-    let topic = "test-topic-1".to_string();
+    let args = Cli::parse();
+    let broker = args.broker;
+    let topic = args.topic;
 
     let admin: AdminClient<_> = ClientConfig::new()
         .set("bootstrap.servers", &broker)
@@ -71,44 +88,30 @@ async fn main() {
     consumer
         .subscribe(&[&topic])
         .expect("Can't subscribe to specified topic");
-    let producer_cln = producer.clone();
-    let topic_cln = topic.clone();
-    tokio::spawn(async move {
-        let mut i = 0_usize;
-        loop {
-            producer_cln
-                .send_result(
-                    FutureRecord::to(&topic_cln)
-                        .key(&format!("Key {}", i))
-                        .payload(&format!("Payload {}", i))
-                        .timestamp(now()),
-                )
-                .unwrap()
-                .await
-                .unwrap()
-                .unwrap();
-            i += 1;
-        }
-    });
-    tokio::spawn(async move {
-        let mut i = 0_usize;
-        loop {
-            let padding = " ".repeat(1024);
-            producer
-                .clone()
-                .send_result(
-                    FutureRecord::to(&topic)
-                        .key(&format!("Key {}", i))
-                        .payload(&padding)
-                        .timestamp(now()),
-                )
-                .unwrap()
-                .await
-                .unwrap()
-                .unwrap();
-            i += 1;
-        }
-    });
+    for _ in 0..args.producers {
+        let producer = producer.clone();
+        let topic = topic.clone();
+        let data_size = args.data_size;
+        tokio::spawn(async move {
+            let mut i = 0_usize;
+            loop {
+                let padding = " ".repeat(data_size);
+                producer
+                    .clone()
+                    .send_result(
+                        FutureRecord::to(&topic)
+                            .key(&format!("Key {}", i))
+                            .payload(&padding)
+                            .timestamp(now()),
+                    )
+                    .unwrap()
+                    .await
+                    .unwrap()
+                    .unwrap();
+                i += 1;
+            }
+        });
+    }
 
     let start = Instant::now();
     let mut latencies = Histogram::<u64>::new(5).unwrap();
