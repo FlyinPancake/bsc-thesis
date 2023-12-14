@@ -74,20 +74,8 @@ async fn main() {
         .create()
         .expect("Producer creation error");
 
-    let consumer: StreamConsumer = ClientConfig::new()
-        .set("group.id", "test-group")
-        .set("bootstrap.servers", &broker)
-        .set("enable.partition.eof", "false")
-        .set("session.timeout.ms", "6000")
-        .set("enable.auto.commit", "false")
-        .set("allow.auto.create.topics", "true")
-        .create()
-        .expect("Consumer creation failed");
-
     tokio::time::sleep(Duration::from_secs(1)).await;
-    consumer
-        .subscribe(&[&topic])
-        .expect("Can't subscribe to specified topic");
+
     for _ in 0..args.producers {
         let producer = producer.clone();
         let topic = topic.clone();
@@ -113,26 +101,34 @@ async fn main() {
         });
     }
 
-    let start = Instant::now();
-    let mut latencies = Histogram::<u64>::new(5).unwrap();
     tokio::time::sleep(Duration::from_secs(1)).await;
     info!("Warming up for 10 seconds...");
-    loop {
-        let message = match consumer.recv().await {
-            Ok(m) => m,
-            Err(_) => continue,
-        };
-        let then = message.timestamp().to_millis().unwrap();
-        if start.elapsed() < Duration::from_secs(10) {
-            continue;
-        } else if start.elapsed() < Duration::from_secs(60) {
-            if latencies.len() == 0 {
-                info!("Recording latencies for 50 seconds...");
-            }
-            latencies += (now() - then) as u64;
-        } else {
-            break;
-        }
+    let mut consumer_handles = vec![];
+    for _ in 0..args.consumers {
+        let consumer: StreamConsumer = ClientConfig::new()
+            .set("group.id", "test-group")
+            .set("bootstrap.servers", &broker)
+            .set("enable.partition.eof", "false")
+            .set("session.timeout.ms", "6000")
+            .set("enable.auto.commit", "false")
+            .set("allow.auto.create.topics", "true")
+            .create()
+            .expect("Consumer creation failed");
+        consumer
+            .subscribe(&[&topic])
+            .expect("Can't subscribe to specified topic");
+        let handle = tokio::spawn(async move {
+            consume_messages(consumer, &args.warmup, &args.test_duration)
+                .await
+                .unwrap()
+        });
+        consumer_handles.push(handle);
+    }
+
+    let mut latencies = Histogram::<u64>::new(5).unwrap();
+    for handle in consumer_handles {
+        let consumer_latencies = handle.await.unwrap();
+        latencies += consumer_latencies;
     }
 
     println!("measurements: {}", latencies.len());
@@ -140,6 +136,33 @@ async fn main() {
     println!("p50 latency:  {}ms", latencies.value_at_quantile(0.50));
     println!("p90 latency:  {}ms", latencies.value_at_quantile(0.90));
     println!("p99 latency:  {}ms", latencies.value_at_quantile(0.99));
+}
+
+async fn consume_messages(
+    consumer: StreamConsumer,
+    warmup: &u64,
+    test_duration: &u64,
+) -> rdkafka::error::KafkaResult<Histogram<u64>> {
+    let mut latencies = Histogram::<u64>::new(5).unwrap();
+
+    let start = Instant::now();
+    loop {
+        let message = match consumer.recv().await {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
+        if start.elapsed() < Duration::from_secs(*warmup) {
+            continue;
+        } else if start.elapsed() < Duration::from_secs(*test_duration) {
+            if latencies.len() == 0 {
+                info!("Recording latencies for 50 seconds...");
+            }
+            let then = message.timestamp().to_millis().unwrap();
+            latencies += (now() - then) as u64;
+        } else {
+            break Ok(latencies);
+        }
+    }
 }
 
 fn now() -> i64 {
