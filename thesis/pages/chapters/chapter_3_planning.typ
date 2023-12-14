@@ -139,9 +139,80 @@ nodes, so we will be able to measure the performance unobstructed by `pgbench`'s
 own resource usage. We will be running the database cluster on the worker nodes,
 and `pgbench` on the controller node.
 
+== Apache Kafka Performance
 #import "@preview/big-todo:0.2.0": todo
 #todo[Add Kafka measurement planning]
 
+Apache Kafka stands as a distributed streaming platform renowned for constructing 
+real-time data pipelines and streaming applications. Characterized by horizontal 
+scalability and fault tolerance, Kafka is particularly well-suited for cloud 
+environments. Widely adopted in production by numerous companies, Kafka is favored 
+for its low latency and high throughput.
+
+At a broad level, Kafka necessitates similar resources to PostgreSQL. However, its 
+distinct emphasis on low latency sets it apart from PostgreSQL in terms of 
+operational priorities.
+
+=== Benchmarking Kafka
+Given Kafka's predominant use in diverse production environments, each use case 
+entails unique configurations, rendering the creation of a generic benchmarking 
+tool challenging. Unlike PostgreSQL, which has a tool like pgbench, Kafka lacks a 
+comparable standardized benchmarking tool. Consequently, a custom tool, named 
+`kafka-benchmark`, was developed for this purpose. Initially, the plan was to 
+implement a Python script for producing and consuming Kafka messages. However, the 
+performance of this script would have proven unsatisfactory, 
+prompting a shift to the development of the benchmarking tool in Rust#cite(<rust>).
+
+The kafka-benchmark tool leverages the `librdkafka`#cite(<librdkafka>) C/C++ 
+library through the `rdkafka`#cite(<rust-rdkafka>) crate#footnote[In the context of 
+Rust programs, libraries and packages are referred to as crates] to interface with 
+Kafka. By doing so, it capitalizes on the performance and features provided by 
+librdkafka, while the Rust language ensures correctness and reliability for the 
+benchmarking tool.
+
+#figure(caption: [Architecture of the Kafka cluster])[
+  #image("/figures/kafka-cluster.excalidraw.svg")
+] <kafka-cluster>
+
+
+=== Kafka Custer
+
+As we can see in @kafka-cluster, the Kafka cluster consists of three nodes for 
+both Kafka and Zookeeper. This differs from @postgres-cluster, where we had
+a main pod and replicas, as neither Kafka nor Zookeeper have a main pod. They
+were initially designed to be a distributed system, so they are inherently
+distributed. There is an internal election process, which determines which node
+is the leader, which is handled by Zookeeper. 
+
+=== Performance Analysis
+
+Our analysis will be concerned with the latency and throughput of Kafka. We will
+be measuring the latency and throughput of the Kafka cluster, as well as the
+latency and throughput of the virtual cluster. During the testint, we will be
+using different numbers of clients, and different message sizes. The test 
+parameters are in @kafka-test-parameters.
+
+#figure(caption: [The test parameters for Kafka])[
+  #table(
+    columns: (auto, auto, auto),
+    inset: 0.5em,
+    [*Producers*],
+    [*Consumers*],
+    [*Message Size*],
+    [$1$],
+    [$1$],
+    [1kB],
+    [$1$],
+    [$5$],
+    [100 byte],
+    [$5$],
+    [$1$],
+    [100 byte],
+  )
+] <kafka-test-parameters>
+
+Each test will run for $60$ seconds. We will repeat each test $5$ times. We will
+be measuring the latency and throughput.
 == Functionality Testing -- CRD coflict <crd-conflict-planning>
 
 As indicated in the context of @version-conflict-sec, version conflicts may

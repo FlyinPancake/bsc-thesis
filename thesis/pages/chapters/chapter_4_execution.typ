@@ -13,6 +13,8 @@ results were not reproducible due to the influence of machine load on database
 performance. Therefore, the obtained results lack conclusiveness, as they are
 neither reproducible nor stable. This will not be an issue for the evaluation of
 the virtual cluster, since we will run the same tests on the same hardware.
+In this chapter we present results in the form of box plots, with the small 
+addition of the mean line (dashed) next to the median line (solid).
 
 #grid(
   columns: (1fr, 1fr),
@@ -78,7 +80,10 @@ one.
 ] <initial-rw-vcluster>
 
 In @initial-rw-vcluster, we present the @tps values of the @rw tests, which were
-conducted inside a virtual Kubernetes cluster compared to the baseline. The @tps
+conducted inside a virtual Kubernetes cluster compared to the baseline. The left
+box plot titled "bare-metal" is the performance of PostgreSQL running on a 
+conventional Kubernetes cluster, while the right side "vcluster" shows the 
+performance of PostgreSQL running on the virtual Kubernetes cluster. The @tps
 values are around $10$-$15%$ lower than the baseline, which is a significant
 difference. However, the variability of the @tps values are increased.
 
@@ -167,10 +172,11 @@ resources to the database.
 #figure(caption: [@ro performance for @sf=10], image("/figures/plots/postgres/scales/ro_10.svg", width: 100%) ) <sf10ro-fig>
 
 Advancing through the scale factors, we turn attention to @sf = 50 as depicted 
-in @sf50rw-fig. A conspicuous trend emerges where the @tps values witness a 
-notable increment of $100$. This increment aligns with expectations, attributed to the heightened presence of parallel workers and a greater volume of database 
-rows in comparison to the scenario illustrated in @sf = 10, as discussed 
-earlier.
+in @sf50rw-fig. We observe our first greater gap in performance comparing 
+"bare-metal" and "vcluster" results. This increment aligns with 
+expectations, attributed to the heightened presence of parallel workers and a 
+greater volume of database rows in comparison to the scenario illustrated in 
+@sf=10, as discussed earlier.
 
 Relative to the observations in @sf10rw-fig, it becomes apparent that the 
 disparities in both means and medians experience a proportional augmentation. 
@@ -178,20 +184,35 @@ This indicative rise underscores that the variability in @tps values is
 concurrently expanding.
 
 
-#figure(caption: [@rw performance for @sf=50], image("/figures/plots/postgres/scales/rw_50.svg", width: 100%) ) <sf50rw-fig>
+#figure(caption: [@rw performance for @sf=50], image("/figures/plots/postgres/scales/rw_50.svg", width: 100%), ) <sf50rw-fig>
 
-Turning our attention to @sf50ro-fig, we observe a higher @tps score for
+Turning our attention to @sf50ro-fig, we observe a higher peak @tps score for
 the virtual cluster compared to the host cluster. This is a surprising
 result, as the virtual cluster is expected to be slower than the host
-cluster. However, multiple re-runs of this scenario indicate higher performance 
-inside the vcluster. 
+cluster. We can attribute this to the fact that the end-to-end nature of
+`pgbench` will naturally lead to higher variability in the results. This
+is especially true for the virtual cluster as we add an additional layer
+of indirection. The medians and means return to similar values to each other.
 
+Vcluster seems to be able to keep up with the host cluster, providing similar
+performance to bare-metal. This is an expected result, as the virtual cluster
+and the host cluster have the same resource limits. The syncer might have a
+higher performance overhead for writing @persistentvolume[s] than reading them.
 
 #figure(caption: [@ro performance for @sf=50], image("/figures/plots/postgres/scales/ro_50.svg", width: 100%) ) <sf50ro-fig>
+
+For the @sf=100 tests we observe the same trends as seen in @sf50rw-fig. and 
+@sf50ro-fig. The @tps values for the virtual cluster are lower than the bare-metal cluster for the @rw tests and similar for the @ro tests.
 
 #figure(caption: [@rw performance for @sf=100], image("/figures/plots/postgres/scales/rw_100.svg", width: 100%) ) <sf100rw-fig>
 
 #figure(caption: [@ro performance for @sf=100], image("/figures/plots/postgres/scales/ro_100.svg", width: 100%) ) <sf100ro-fig>
+
+The trends continue in @sf200rw-fig. and @sf200ro-fig, although in the @ro tests
+the virtual cluster is slightly more behind the host cluster than in the 
+benchmarks before. Here we can see, that the virtual cluster is only able to 
+keep up with the host cluster to a certain point. After that, the virtual 
+cluster starts to slightly fall behind the host cluster.
 
 #figure(caption: [@rw performance for @sf=200], image("/figures/plots/postgres/scales/rw_200.svg", width: 100%) ) <sf200rw-fig>
 

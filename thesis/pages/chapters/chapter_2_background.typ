@@ -498,3 +498,43 @@ in @vcluster-arch-fig and does not sync them to the host cluster. Since the
 cluster, only in the virtual control plane. This leads to the conclusion, that
 the @crd[s] are isolated to the virtual cluster.
 
+== PostgreSQ
+
+PostgreSQL, an open-source relational database management system (RDBMS), stands 
+as a robust and versatile solution within the realm of data management. Developed 
+with a strong emphasis on extensibility, standards compliance, and ACID 
+(Atomicity, Consistency, Isolation, Durability) properties, PostgreSQL has 
+emerged as a preferred choice for diverse applications ranging from small-scale 
+projects to large-scale enterprise systems. Its extensible nature allows users to 
+define custom data types, operators, and functions, fostering adaptability to 
+specific project requirements. The support for various programming languages, 
+including but not limited to, SQL, Python, and Java, further enhances its 
+flexibility. With a mature and active community contributing to its development, 
+PostgreSQL continually evolves, incorporating advanced features such as advanced 
+indexing mechanisms, full-text search capabilities, and support for complex data 
+types, positioning itself as a pivotal element in the landscape of relational 
+databases. #cite(<postgres-wikipedia>) In this thesis we will utilize PostgreSQL 
+as an example application, to showcase the performance and capabilities of 
+vCluster.
+
+// === pgbench
+
+// Pgbench, a benchmarking tool for PostgreSQL is an extra component of PostgreSQL, 
+// it  enables the assessment of the database system's performance, scalability, and 
+// concurrency handling. This open-source tool offers a streamlined approach to 
+// simulate various workloads, aiding researchers and developers in evaluating 
+// PostgreSQL's capabilities under different conditions. With its simplicity and 
+// efficiency, pgbench serves as a valuable instrument for gauging the 
+// responsiveness and stability of PostgreSQL databases.
+
+== Apache Kafka 
+Apache Kafka, a distributed event streaming platform, plays a pivotal role in 
+modern data architectures, standing out as a key element in various data 
+processing scenarios. Built for high-throughput, fault tolerance, and real-time 
+data streaming, Kafka facilitates the seamless exchange of information between 
+different components in a distributed system. Its publish-subscribe model and 
+durable storage capabilities make it ideal for building scalable and resilient 
+data pipelines. Kafka's ability to handle massive volumes of data with low 
+latency has made it a go-to solution for applications ranging from real-time 
+analytics to log aggregation. #cite(<kafka-wikipedia>) It will be used as an
+example application too, to showcase the performance of vCluster.

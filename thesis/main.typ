@@ -7,6 +7,7 @@
 // #show par: set block(spacing: 0.55em)
 #set text(font: "Libre Baskerville", size: 10pt)
 #show raw: set text(font: "CaskaydiaCove NFP", size: 1.2em)
+#show super: set text(size: 1.5em)
 #set text(lang: "en", region: "GB")
 #show heading.where(level: 1): set text(size: 2em)
 #show heading: set block(above: 1.4em, below: 1em)
@@ -27,10 +28,14 @@
 #counter(page).update(1)
 #include "pages/chapters.typ"
 
-#set page(numbering: "I")
-#counter(page).update(1)
 
-#include "pages/bibliography.typ"
+
+#set page(numbering: "I")
+
+#page[
+  #counter(page).update(1)
+  #bibliography("/bibliography.yaml", style: "ieee")
+]
 
 = List of Figures
 #outline(title: none, target: figure.where(kind: image))

@@ -18,5 +18,5 @@
 #include "chapters/chapter_4_execution.typ"
 #todo[Measurement Evaluation]
 #include "chapters/chapter_5_conclusion.typ"
-#todo[Conclusion]
+#pagebreak()
 // #import "@preview/tablex:0.0.5"

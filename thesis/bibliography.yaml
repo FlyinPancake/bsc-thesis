@@ -90,6 +90,41 @@ postgres-replication:
     value: https://www.postgresql.org/docs/15/runtime-config-replication.html
     accessed: 2023-11-20
 
+postgres-wikipedia:
+  type: Web
+  title: PostgreSQL
+  url:
+    value: https://en.wikipedia.org/wiki/PostgreSQL
+    accessed: 2023-11-20
+
+kafka-wikipedia:
+  type: Web
+  title: Apache Kafka
+  url:
+    value: https://en.wikipedia.org/wiki/Apache_Kafka
+    accessed: 2023-11-20
+
+rust:
+  type: Web
+  title: The Rust Programming Language
+  url:
+    value: https://www.rust-lang.org/
+    accessed: 2023-12-11
+
+librdkafka:
+  type: Web
+  title: librdkafka - the Apache Kafka C/C++ client library
+  url:
+    value: https://github.com/confluentinc/librdkafka
+    accessed: 2023-12-11
+
+rust-rdkafka:
+  type: Web
+  title: rust-rdkafka
+  url:
+    value: https://github.com/fede1024/rust-rdkafka
+    accessed: 2023-12-11
+
 vcluster-github:
   type: repository
   title: "vcluster GitHub repository"
