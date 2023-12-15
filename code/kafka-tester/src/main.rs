@@ -7,7 +7,11 @@ use rdkafka::{
     producer::{FutureProducer, FutureRecord},
     ClientConfig, Message,
 };
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use serde::Serialize;
+use std::{
+    io,
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+};
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 
@@ -29,12 +33,22 @@ struct Cli {
     consumers: u64,
 }
 
+#[derive(Debug, Serialize)]
+struct TestResult {
+    measurements: u64,
+    mean_latency: f64,
+    p50_latency: u64,
+    p90_latency: u64,
+    p99_latency: u64,
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::Subscriber::builder()
         .with_env_filter(
             EnvFilter::from_default_env().add_directive("kafka_benchmark=trace".parse().unwrap()),
         )
+        .with_writer(io::stderr)
         .init();
 
     let args = Cli::parse();
@@ -102,7 +116,7 @@ async fn main() {
     }
 
     tokio::time::sleep(Duration::from_secs(1)).await;
-    info!("Warming up for 10 seconds...");
+    info!("Warming up for {} seconds...", args.warmup);
     let mut consumer_handles = vec![];
     for _ in 0..args.consumers {
         let consumer: StreamConsumer = ClientConfig::new()
@@ -131,11 +145,17 @@ async fn main() {
         latencies += consumer_latencies;
     }
 
-    println!("measurements: {}", latencies.len());
-    println!("mean latency: {}ms", latencies.mean());
-    println!("p50 latency:  {}ms", latencies.value_at_quantile(0.50));
-    println!("p90 latency:  {}ms", latencies.value_at_quantile(0.90));
-    println!("p99 latency:  {}ms", latencies.value_at_quantile(0.99));
+    let test_result = TestResult {
+        measurements: latencies.len() as u64,
+        mean_latency: latencies.mean(),
+        p50_latency: latencies.value_at_quantile(0.50),
+        p90_latency: latencies.value_at_quantile(0.90),
+        p99_latency: latencies.value_at_quantile(0.99),
+    };
+
+    serde_json::to_writer(io::stdout(), &test_result).unwrap();
+
+    println!();
 }
 
 async fn consume_messages(
@@ -153,9 +173,9 @@ async fn consume_messages(
         };
         if start.elapsed() < Duration::from_secs(*warmup) {
             continue;
-        } else if start.elapsed() < Duration::from_secs(*test_duration) {
+        } else if start.elapsed() < Duration::from_secs(*test_duration + *warmup) {
             if latencies.len() == 0 {
-                info!("Recording latencies for 50 seconds...");
+                info!("Recording latencies for {} seconds...", test_duration);
             }
             let then = message.timestamp().to_millis().unwrap();
             latencies += (now() - then) as u64;

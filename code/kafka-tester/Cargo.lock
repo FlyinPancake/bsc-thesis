@@ -318,6 +318,8 @@ dependencies = [
  "clap",
  "hdrhistogram",
  "rdkafka",
+ "serde",
+ "serde_json",
  "tokio",
  "tracing",
  "tracing-subscriber",

@@ -41,6 +41,20 @@ spec:
       targetPort: 9092
   type: ClusterIP
 ---
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.18.1-standalone/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ingress
+  namespace: kafka
+spec:
+  selector:
+    app: kafka-cluster
+  ports:
+    - port: 9092
+      targetPort: 9092
+  type: NodePort
+---
 # yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.18.1-standalone/statefulset-apps-v1.json
 apiVersion: apps/v1
 kind: StatefulSet
@@ -61,7 +75,7 @@ spec:
     spec:
       containers:
         - name: zookeeper-cluster
-          image: bitnami/zookeeper:latest
+          image: bitnami/zookeeper:3.8
           securityContext:
             runAsUser: 0
           ports:
@@ -103,7 +117,7 @@ spec:
       hostname: kafka-cluster
       containers:
         - name: kafka-cluster
-          image: bitnami/kafka:2.6.0
+          image: bitnami/kafka:3.3
           #        image: bitnami/kafka:latest
           securityContext:
             runAsUser: 0
@@ -119,3 +133,9 @@ spec:
             #          value: zookeeper-cluster:2181
             - name: ALLOW_PLAINTEXT_LISTENER
               value: "yes"
+            - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: PLAINTEXT://kafka-broker:9092
+            - name: KAFKA_LISTENERS
+              value: PLAINTEXT://:9092
