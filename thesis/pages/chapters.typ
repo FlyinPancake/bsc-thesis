@@ -10,13 +10,11 @@
     #v(0.5em)\
     #it.body
 ]
-#import "@preview/big-todo:0.2.0": todo
 
 #include "chapters/chapter_1_intro.typ" 
 #include "chapters/chapter_2_background.typ"
 #include "chapters/chapter_3_planning.typ"
 #include "chapters/chapter_4_execution.typ"
-#todo[Measurement Evaluation]
 #include "chapters/chapter_5_conclusion.typ"
 #pagebreak()
 // #import "@preview/tablex:0.0.5"

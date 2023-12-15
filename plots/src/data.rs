@@ -30,3 +30,12 @@ pub struct PgbenchResult {
     pub tps: f64,
     pub time: f64,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct KafkaTestResult {
+    pub measurements: u64,
+    pub mean_latency: f64,
+    pub p50_latency: u64,
+    pub p90_latency: u64,
+    pub p99_latency: u64,
+}

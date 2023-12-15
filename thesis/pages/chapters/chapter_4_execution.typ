@@ -2,7 +2,7 @@
 
 = Execution and evaluation
 
-== PostgreSQL
+== PostgreSQL <postgres-test-exec-sec>
 
 To establish a baseline for comparison, we utilized PostgreSQL as the reference
 database. We conducted several `pgbench` tests to assess the performance of
@@ -217,6 +217,43 @@ cluster starts to slightly fall behind the host cluster.
 #figure(caption: [@rw performance for @sf=200], image("/figures/plots/postgres/scales/rw_200.svg", width: 100%) ) <sf200rw-fig>
 
 #figure(caption: [@ro performance for @sf=200], image("/figures/plots/postgres/scales/ro_200.svg", width: 100%) ) <sf200ro-fig>
+
+== Kafka <kafka-test-exec-sec>
+
+In this section, we will evaluate the performance of Kafka running inside a
+virtual Kubernetes cluster. We will use the setup described in @kafka-sec, 
+within a vcluster and running on a real Kubernetes cluster. We will used the same
+setup for the virtual cluster and the host cluster, with the addtition of some
+additional configuration for the virtual cluster, as deployment is not as easy 
+as on physical clusters. Our testing will focus on latency and not throughput, as 
+increasing the througput can be done by scaling the Kafka cluster horizontally.
+
+We used Strimzi's Kafka operator @strimzi to deploy Kafka and Zookeeper on both 
+the virtual cluster and the host cluster. We tried to reuse the same configuration 
+for both clusters, but we had issues with the virtual cluster, as the virtual 
+cluster does not expose the real nodes' IP addresses. This is a problem for the 
+Strimzi operator, as it needs to know the IP addresses of the nodes to configure
+Kafka's boostrap. We solved this issue by using a custom configuration for the 
+virtual cluster, where we manually set the IP addresses of the nodes. This is not 
+a problem for the host cluster, as the Strimzi operator can access the real nodes' IP addresses.
+
+#figure(image("/figures/plots/kafka/latency.svg", width: 100%), caption: [Latencies of Kafka]) <kafka-latency>
+In @kafka-latency, we present means of different latency measurements for the
+virtual cluster and the host cluster. We used the different test cases described
+in @kafka-sec to create a combined plot of the different measurements. We can
+observe that the two performance values are similar, within the margin of error.
+This is expected, as the virtual cluster and the host cluster have the same
+resource limits. The syncer might have some performance overhead, but it is limited.
+
+#figure(image("/figures/plots/kafka/p90.svg", width: 100%), caption: [90#super[th] percentile of Kafka's latencies]) <kafka-p90>
+
+For the 99#super[th] percentile, we can observe that the virtual cluster 
+once again, exhibits similar performance to the host cluster (within the margin of 
+error). These results are expected and align with the outcomes of the 90#super[th]
+percentile measurements in @kafka-p90.
+
+#figure(image("/figures/plots/kafka/p99.svg", width: 100%), caption: [99#super[th] percentile of Kafka's latencies]) <kafka-p99>
+
 == Functionality Testing -- CRD conflict
 
 In this section, we aim to assess the efficacy of `vcluster` in resolving the 

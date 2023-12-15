@@ -139,9 +139,7 @@ nodes, so we will be able to measure the performance unobstructed by `pgbench`'s
 own resource usage. We will be running the database cluster on the worker nodes,
 and `pgbench` on the controller node.
 
-== Apache Kafka Performance
-#import "@preview/big-todo:0.2.0": todo
-#todo[Add Kafka measurement planning]
+== Apache Kafka Performance <kafka-sec>
 
 Apache Kafka stands as a distributed streaming platform renowned for constructing 
 real-time data pipelines and streaming applications. Characterized by horizontal 
@@ -170,19 +168,21 @@ Kafka. By doing so, it capitalizes on the performance and features provided by
 librdkafka, while the Rust language ensures correctness and reliability for the 
 benchmarking tool.
 
-#figure(caption: [Architecture of the Kafka cluster])[
-  #image("/figures/kafka-cluster.excalidraw.svg")
-] <kafka-cluster>
+// #figure(caption: [Architecture of the Kafka cluster])[
+//   #image("/figures/kafka-cluster.excalidraw.svg")
+// ] <kafka-cluster>
 
 
 === Kafka Custer
 
-As we can see in @kafka-cluster, the Kafka cluster consists of three nodes for 
-both Kafka and Zookeeper. This differs from @postgres-cluster, where we had
-a main pod and replicas, as neither Kafka nor Zookeeper have a main pod. They
+Our Kafka cluster consists of three nodes for  both Kafka and Zookeeper.
+This differs from the PostgreSQL cluster depicted in @postgres-cluster, where we 
+had a main pod and replicas, as neither Kafka nor Zookeeper have a main pod. They 
 were initially designed to be a distributed system, so they are inherently
-distributed. There is an internal election process, which determines which node
-is the leader, which is handled by Zookeeper. 
+behave as such. There is an internal election process, which determines which node
+is the leader, which is handled by Zookeeper. Zookeeper is required for Kafka to 
+function as of writing this thesis, but it is planned to become optional in the 
+future with KRaft mode#cite(<kafka-kraft>).  
 
 === Performance Analysis
 
@@ -190,29 +190,35 @@ Our analysis will be concerned with the latency and throughput of Kafka. We will
 be measuring the latency and throughput of the Kafka cluster, as well as the
 latency and throughput of the virtual cluster. During the testint, we will be
 using different numbers of clients, and different message sizes. The test 
-parameters are in @kafka-test-parameters.
+parameters are in @kafka-test-parameters. We will be using all of the possible 
+triples of the test values, and for every triple, we will be running the test
+$3$ times to account for some of the outliers.
 
 #figure(caption: [The test parameters for Kafka])[
   #table(
-    columns: (auto, auto, auto),
+    columns: (auto, auto),
+    align: (x, y) => (left, right).at(x),
     inset: 0.5em,
     [*Producers*],
+    [1,3,5],
     [*Consumers*],
+    [1,3,5],
     [*Message Size*],
-    [$1$],
-    [$1$],
-    [1kB],
-    [$1$],
-    [$5$],
-    [100 byte],
-    [$5$],
-    [$1$],
-    [100 byte],
+    [100 B, 1kB],
   )
 ] <kafka-test-parameters>
 
 Each test will run for $60$ seconds. We will repeat each test $5$ times. We will
 be measuring the latency and throughput.
+
+We measure the latency of every message (after a warm-up period), and then
+we use HdrHistrogram @hdrhistogram to accumulate the latencies. We will be
+using the mean, the 50th percentile, the 90th percentile, the 99th 
+percentile. We will then compare the latencies across the different tests.
+We expect the the latency to be higher or equal in the virtual cluster. 
+Due to the nature of this test, we might see some outliers in the latency
+measurements. 
+
 == Functionality Testing -- CRD coflict <crd-conflict-planning>
 
 As indicated in the context of @version-conflict-sec, version conflicts may

@@ -1,6 +1,7 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use plotly::box_plot::{BoxMean, BoxPoints};
 use plotly::common::{Font, Title};
@@ -9,11 +10,149 @@ use plotly::{BoxPlot, Layout, Plot};
 use rayon::prelude::*;
 
 mod data;
-use data::PostgresTestResult;
+use data::{KafkaTestResult, PostgresTestResult};
+
+type KafkaTestContainer = HashMap<String, Vec<KafkaTestResult>>;
 
 fn main() -> color_eyre::Result<()> {
-    baseline_graphs()?;
-    scaled_tests();
+    // baseline_graphs()?;
+    // scaled_tests();
+
+    let kafka_test_host: KafkaTestContainer = serde_json::from_reader(BufReader::new(
+        File::open(Path::new(
+            "../code/test_results/kafka_bench/kafka_benchmark_2023-12-15T12:04:48.920760.json",
+        ))
+        .unwrap(),
+    ))
+    .unwrap();
+
+    let host_means = kafka_test_host
+        .values()
+        .flat_map(|x| x.iter().map(|x| x.mean_latency).collect::<Vec<f64>>())
+        .collect::<Vec<f64>>();
+
+    let trace = BoxPlot::new(host_means)
+        .name("bare-metal")
+        // .box_points(BoxPoints::All)
+        .box_mean(BoxMean::True);
+
+    let mut plt = Plot::new();
+    plt.add_trace(trace);
+    let kafka_test_vcluster: KafkaTestContainer = serde_json::from_reader(BufReader::new(
+        File::open(Path::new(
+            "../code/test_results/kafka_bench/kafka_benchmark_2023-12-15T14:25:22.420148.json",
+        ))
+        .unwrap(),
+    ))
+    .unwrap();
+
+    let vcluster_means = kafka_test_vcluster
+        .values()
+        .flat_map(|x| x.iter().map(|x| x.mean_latency).collect::<Vec<f64>>())
+        .collect::<Vec<f64>>();
+
+    let trace = BoxPlot::new(vcluster_means)
+        .name("vcluster")
+        // .box_points(BoxPoints::All)
+        .box_mean(BoxMean::True);
+    plt.add_trace(trace);
+    let new_layout = plt
+        .layout()
+        .clone()
+        .grid(LayoutGrid::new().domain(GridDomain::new().x(vec![90.0, 100.0])))
+        .y_axis(
+            Axis::new()
+                .title(Title::new("Average Latency (ms)").font(Font::default().size(20)))
+                .tick_font(Font::new().size(20)),
+        )
+        .x_axis(Axis::new().tick_font(Font::new().size(20)))
+        .show_legend(false);
+    plt.set_layout(new_layout);
+    plt.write_image(
+        "images/kafka/latency.svg",
+        plotly::ImageFormat::SVG,
+        1100,
+        420,
+        1.0,
+    );
+
+    let mut plt = Plot::new();
+    let host_p90 = kafka_test_host
+        .values()
+        .flat_map(|x| x.iter().map(|x| x.p90_latency).collect::<Vec<u64>>())
+        .collect::<Vec<u64>>();
+    let trace = BoxPlot::new(host_p90)
+        .name("bare-metal")
+        // .box_points(BoxPoints::All)
+        .box_mean(BoxMean::True);
+    plt.add_trace(trace);
+    let vcluster_p90 = kafka_test_vcluster
+        .values()
+        .flat_map(|x| x.iter().map(|x| x.p90_latency).collect::<Vec<u64>>())
+        .collect::<Vec<u64>>();
+    let trace = BoxPlot::new(vcluster_p90)
+        .name("vcluster")
+        // .box_points(BoxPoints::All)
+        .box_mean(BoxMean::True);
+    plt.add_trace(trace);
+    let new_layout = plt
+        .layout()
+        .clone()
+        .grid(LayoutGrid::new().domain(GridDomain::new().x(vec![90.0, 100.0])))
+        .y_axis(
+            Axis::new()
+                .title(Title::new("90th Percentile Latency (ms)").font(Font::default().size(20)))
+                .tick_font(Font::new().size(20)),
+        )
+        .x_axis(Axis::new().tick_font(Font::new().size(20)))
+        .show_legend(false);
+    plt.set_layout(new_layout);
+    plt.write_image(
+        "images/kafka/p90.svg",
+        plotly::ImageFormat::SVG,
+        1100,
+        420,
+        1.0,
+    );
+
+    let mut plt = Plot::new();
+    let host_p99 = kafka_test_host
+        .values()
+        .flat_map(|x| x.iter().map(|x| x.p99_latency).collect::<Vec<u64>>())
+        .collect::<Vec<u64>>();
+    let trace = BoxPlot::new(host_p99)
+        .name("bare-metal")
+        // .box_points(BoxPoints::All)
+        .box_mean(BoxMean::True);
+    plt.add_trace(trace);
+    let vcluster_p99 = kafka_test_vcluster
+        .values()
+        .flat_map(|x| x.iter().map(|x| x.p99_latency).collect::<Vec<u64>>())
+        .collect::<Vec<u64>>();
+    let trace = BoxPlot::new(vcluster_p99)
+        .name("vcluster")
+        // .box_points(BoxPoints::All)
+        .box_mean(BoxMean::True);
+    plt.add_trace(trace);
+    let new_layout = plt
+        .layout()
+        .clone()
+        .grid(LayoutGrid::new().domain(GridDomain::new().x(vec![90.0, 100.0])))
+        .y_axis(
+            Axis::new()
+                .title(Title::new("99th Percentile Latency (ms)").font(Font::default().size(20)))
+                .tick_font(Font::new().size(20)),
+        )
+        .x_axis(Axis::new().tick_font(Font::new().size(20)))
+        .show_legend(false);
+    plt.set_layout(new_layout);
+    plt.write_image(
+        "images/kafka/p99.svg",
+        plotly::ImageFormat::SVG,
+        1100,
+        420,
+        1.0,
+    );
 
     Ok(())
 }

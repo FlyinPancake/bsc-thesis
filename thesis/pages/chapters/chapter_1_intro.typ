@@ -43,3 +43,6 @@ can enhance the developer experience and reduce the operational costs
 associated with Kubernetes clusters. Notably, the security implications of 
 virtual clusters will not be explored in this thesis, as this topic warrants 
 dedicated attention in a separate research endeavour.
+
+#import "@preview/big-todo:0.2.0": todo
+#todo[Thesis structure]

@@ -74,56 +74,76 @@ pgbench:
   title: "pgbench documentation"
   url:
     value: https://www.postgresql.org/docs/current/pgbench.html
-    accessed: 2023-12-01
+    date: 2023-12-01
 
 k3s:
   type: Web
-  title: K3s docs
+  title: "K3s docs"
   url:
     value: https://docs.k3s.io/
-    accessed: 2023-12-03
+    date: 2023-12-03
 
 postgres-replication:
   type: Web
   title: PostgreSQL Replication
   url:
     value: https://www.postgresql.org/docs/15/runtime-config-replication.html
-    accessed: 2023-11-20
+    date: 2023-11-20
 
 postgres-wikipedia:
   type: Web
   title: PostgreSQL
   url:
     value: https://en.wikipedia.org/wiki/PostgreSQL
-    accessed: 2023-11-20
+    date: 2023-11-20
 
 kafka-wikipedia:
   type: Web
   title: Apache Kafka
   url:
     value: https://en.wikipedia.org/wiki/Apache_Kafka
-    accessed: 2023-11-20
+    date: 2023-11-20
+
+kafka-kraft:
+  type: Web
+  title: "Kafka KRaft"
+  url:
+    value: https://developer.confluent.io/learn/kraft/
+    date: 2023-11-20
+strimzi:
+  type: Web
+  title: "Strimzi"
+  url:
+    value: https://strimzi.io/
+    date: 2023-11-20
 
 rust:
   type: Web
   title: The Rust Programming Language
   url:
     value: https://www.rust-lang.org/
-    accessed: 2023-12-11
+    date: 2023-12-11
 
 librdkafka:
   type: Web
   title: librdkafka - the Apache Kafka C/C++ client library
   url:
     value: https://github.com/confluentinc/librdkafka
-    accessed: 2023-12-11
+    date: 2023-12-11
+
+hdrhistogram:
+  type: Web
+  title: hdrhistogram
+  url:
+    value: https://github.com/HdrHistogram/HdrHistogram_rust/tree/v7.5.4
+    date: 2023-12-11
 
 rust-rdkafka:
   type: Web
   title: rust-rdkafka
   url:
     value: https://github.com/fede1024/rust-rdkafka
-    accessed: 2023-12-11
+    date: 2023-12-11
 
 vcluster-github:
   type: repository
@@ -131,7 +151,7 @@ vcluster-github:
   serial-number: v0.17.1
   url:
     value: https://github.com/loft-sh/vcluster
-    accessed: 2023-11-23
+    date: 2023-11-23
 
 harry:
   type: Book
