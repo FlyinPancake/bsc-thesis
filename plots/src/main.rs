@@ -15,9 +15,15 @@ use data::{KafkaTestResult, PostgresTestResult};
 type KafkaTestContainer = HashMap<String, Vec<KafkaTestResult>>;
 
 fn main() -> color_eyre::Result<()> {
-    // baseline_graphs()?;
+    baseline_graphs()?;
     // scaled_tests();
 
+    kafka_plots();
+
+    Ok(())
+}
+
+fn kafka_plots() {
     let kafka_test_host: KafkaTestContainer = serde_json::from_reader(BufReader::new(
         File::open(Path::new(
             "../code/test_results/kafka_bench/kafka_benchmark_2023-12-15T12:04:48.920760.json",
@@ -153,8 +159,6 @@ fn main() -> color_eyre::Result<()> {
         420,
         1.0,
     );
-
-    Ok(())
 }
 
 fn scaled_tests() {
@@ -476,7 +480,6 @@ fn pgbench_rw_box_plot(
     let host_rw_tps = host_rw_tps[1..host_rw_tps.len() - 1].to_vec();
     let host_rw_tps = BoxPlot::new(host_rw_tps)
         .name(box_plot_name)
-        .box_points(plotly::box_plot::BoxPoints::All)
         .box_mean(BoxMean::True);
     host_rw_tps
 }
@@ -495,7 +498,6 @@ fn pgbench_ro_box_plot(
     let host_rw_tps = host_rw_tps[1..host_rw_tps.len() - 1].to_vec();
     let host_rw_tps = BoxPlot::new(host_rw_tps)
         .name(box_plot_name)
-        .box_points(plotly::box_plot::BoxPoints::All)
         .box_mean(BoxMean::True);
     host_rw_tps
 }

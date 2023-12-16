@@ -22,9 +22,9 @@
 
 The initial section of the thesis comprises a comprehensive literature review covering the Kubernetes ecosystem and specifically delving into the features and capabilities of vcluster. This review serves as a foundation for establishing expectations related to vcluster and ensures a thorough understanding of the broader Kubernetes landscape.
 
-Following the literature review, the subsequent section provides a detailed account of the tests conducted to assess the performance and functionality of virtual clusters. This involves familiarizing ourselves with the testing tools employed, outlining the chosen test cases, and elucidating the rationale behind their selection, along with a thorough description of the testing environment.
+Following the literature review, the subsequent section provides a detailed account of the tests conducted to assess the performance and functionality of virtual clusters. This involves familiarizing ourselves with the testing tools employed, outlining the chosen test cases, and explaining the rationale behind their selection, along with a thorough description of the testing environment.
 
-The thesis then proceeds to articulate the findings derived from the testing phase, highlighting any encountered issues and detailing the corresponding solutions devised. Importantly, adjustments to the initial methodology are expounded upon, underscoring the necessity for modifications to attain pertinent and reliable results.
+The thesis then proceeds to articulate the findings derived from the testing phase, highlighting any encountered issues and detailing the corresponding solutions devised. Importantly, adjustments to the initial methodology are presented, uderscoring the necessity for modifications to attain meaningful and reliable results.
 
 In conclusion, the thesis outlines potential avenues for future research on vcluster, offering insights into areas that merit further exploration. A comprehensive discussion of the findings, along with reflections on the implications of the research, concludes the thesis.
 ]

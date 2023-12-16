@@ -8,17 +8,13 @@ performance of the virtual cluster's control plane.
 
 === Performance of the Applications
 
-My testing will focus on applications that are often used in the cloud. These
-applications are:
-- PostgreSQL -- a relational database, most loved by professional developers
-  according to StackOverflow's 2023 survey #cite(<stackoverflow-survey>).
-- Kafka -- an industry-standard distributed streaming platform
-
+Our testing will focus on applications that are often used in the cloud. These
+applications are PostgreSQL and Apache Kafka.
 These applications are often deployed in the cloud, and are used by many
 companies. Both applications are open-source, and have a large community of
-users and contributors. Both applications have respective tools for measuring
-their performance. For PostgreSQL, the tool is called `pgbench`, and for Kafka,
-the tool is called `kafka-producer-perf-test`.
+users and contributors. PostgreSQL has a companion application called `pgbench`
+#cite(<pgbench>), which is a benchmarking tool for PostgreSQL. For Kafka, 
+there is no such tool, so one had to be created. 
 
 === Performance of the Control Plane
 
@@ -52,11 +48,14 @@ runs the virtual control plane. It has 16 cores and 32GB of RAM. All the virtual
 machines run Ubuntu 22.04, run on OpenStack, and have AMD EPYC Rome CPUs.
 
 This setup represents a small private cloud cluster. The Kubernetes distribution
-that is used is `k3s` #cite(<k3s>), the same which is the default for backing
-`vclutster` #cite(<vcluster>). Each machine has a single boot disk. The boot
-disk is a 160GB volume, which is more than enough for the operating system and
-the applications that are being tested. The boot disk is an SSD volume, which is
-the recommended volume type for boot disks in OpenStack.
+that is used is `k3s` #cite(<k3s>), the same which is the default Kubernetes
+controller backing `vclutster` #cite(<vcluster>). Each machine has a single 
+boot disk. The boot disk is a 160GB volume, which is more than enough for the 
+operating system and the applications that are being tested. The boot disk is an SSD volume, which is the recommended volume type for boot disks in OpenStack. 
+For use with @persistentvolume[s], the storage goes trough longhorn 
+#cite(<longhorn>), which is a distributed block storage solution for Kubernetes. 
+Longhorn uses the boot disks as storage, so the boot disks are also used for the 
+@persistentvolume[s].
 
 == Benchmarking PostgreSQL with `pgbench` <pgbench-sec>
 
@@ -89,8 +88,7 @@ structure is as follows in #ref(<pgbench-scale-1>).
 ] <pgbench-scale-1>
 
 To simulate a larger PostgreSQL database, `pgbench`'s initialization mode can be
-utlilized to create a database with $100$ times more data. This is the `scale`
-parameter.
+utlilized to create a database with $100$ times more data.
 
 PostgreSQL can be hosted from a single node, but in production, it is always
 advised to use a cluster of PostgreSQL nodes. The most basic production-ready
@@ -99,8 +97,9 @@ nodes are not simply PostgreSQL pods, but rather a main pod and $2$ replica
 pods. The data replication is not done by Kubernetes, but rather by PostgreSQL
 itself, using the streaming replication feature #cite(<postgres-replication>).
 We cannot commit changes to the replica pods, but we can read from them, so they
-can be useful as read-caches too beside redundancy. If for whatever reason the
-main pod fails, one of the replica pods can be promoted to be the main pod.
+can be useful as read-only databases too beside redundancy. If for whatever 
+reason the main pod fails, one of the replica pods can be promoted to be the 
+main pod.
 
 #figure(caption: [PostgreSQL cluster with a main pod and two replica pods])[
   #image("../../figures/postgres-cluster.excalidraw.svg", width: 80%)
@@ -141,13 +140,7 @@ and `pgbench` on the controller node.
 
 == Apache Kafka Performance <kafka-sec>
 
-Apache Kafka stands as a distributed streaming platform renowned for constructing 
-real-time data pipelines and streaming applications. Characterized by horizontal 
-scalability and fault tolerance, Kafka is particularly well-suited for cloud 
-environments. Widely adopted in production by numerous companies, Kafka is favored 
-for its low latency and high throughput.
-
-At a broad level, Kafka necessitates similar resources to PostgreSQL. However, its 
+At a high level, Kafka necessitates similar resources to PostgreSQL. However, its 
 distinct emphasis on low latency sets it apart from PostgreSQL in terms of 
 operational priorities.
 
@@ -162,11 +155,17 @@ performance of this script would have proven unsatisfactory,
 prompting a shift to the development of the benchmarking tool in Rust#cite(<rust>).
 
 The kafka-benchmark tool leverages the `librdkafka`#cite(<librdkafka>) C/C++ 
-library through the `rdkafka`#cite(<rust-rdkafka>) crate#footnote[In the context of 
-Rust programs, libraries and packages are referred to as crates] to interface with 
-Kafka. By doing so, it capitalizes on the performance and features provided by 
-librdkafka, while the Rust language ensures correctness and reliability for the 
-benchmarking tool.
+library through the `rdkafka`#cite(<rust-rdkafka>) crate#footnote[In the context 
+of Rust programs, libraries and packages are referred to as crates] to interface 
+with Kafka. By doing so, it capitalizes on the performance and features provided 
+by librdkafka, while the Rust language ensures correctness and reliability for the  benchmarking tool. Rust is a systems programming language, which is
+designed for performance and reliability. It differs from popular languages such
+as C and C++ in that it is memory safe by default, and from languages such as
+Java and Go in that it does not have a garbage collector. Having no garbage
+collector means that Rust does not have iterfere with the application's
+execution to free up memory. This is important for benchmarking, as the
+application does not have to wait for the garbage collector to free up memory.
+
 
 // #figure(caption: [Architecture of the Kafka cluster])[
 //   #image("/figures/kafka-cluster.excalidraw.svg")
@@ -175,24 +174,24 @@ benchmarking tool.
 
 === Kafka Custer
 
-Our Kafka cluster consists of three nodes for  both Kafka and Zookeeper.
+Our Kafka cluster consists of three nodes for  both Kafka and ZooKeeper.
+ZooKeeper is a centralized service for maintaining configuration information, 
+naming, providing distributed synchronization, and providing group services#cite(<zookeeper>).
 This differs from the PostgreSQL cluster depicted in @postgres-cluster, where we 
-had a main pod and replicas, as neither Kafka nor Zookeeper have a main pod. They 
+had a main pod and replicas, as neither Kafka nor ZooKeeper have a main pod. They 
 were initially designed to be a distributed system, so they are inherently
-behave as such. There is an internal election process, which determines which node
-is the leader, which is handled by Zookeeper. Zookeeper is required for Kafka to 
-function as of writing this thesis, but it is planned to become optional in the 
-future with KRaft mode#cite(<kafka-kraft>).  
+behave as such. Kafka and ZooKeeper are both stateful applications, so they
+require @persistentvolume[s]. The Kafka cluster is deployed using the
+Strimzi#cite(<strimzi>) operator.
 
 === Performance Analysis
 
 Our analysis will be concerned with the latency and throughput of Kafka. We will
 be measuring the latency and throughput of the Kafka cluster, as well as the
-latency and throughput of the virtual cluster. During the testint, we will be
+latency and throughput of the virtual cluster. During the testing, we will be
 using different numbers of clients, and different message sizes. The test 
 parameters are in @kafka-test-parameters. We will be using all of the possible 
-triples of the test values, and for every triple, we will be running the test
-$3$ times to account for some of the outliers.
+triplets of the test values, and for every triplet, we will be running the test.
 
 #figure(caption: [The test parameters for Kafka])[
   #table(
@@ -208,11 +207,9 @@ $3$ times to account for some of the outliers.
   )
 ] <kafka-test-parameters>
 
-Each test will run for $60$ seconds. We will repeat each test $5$ times. We will
-be measuring the latency and throughput.
-
+Each test will run for $300$ seconds and will be repeaterd $3$ times.
 We measure the latency of every message (after a warm-up period), and then
-we use HdrHistrogram @hdrhistogram to accumulate the latencies. We will be
+we use HdrHistrogram @hdrhistogram to aggregate the latencies. We will be
 using the mean, the 50th percentile, the 90th percentile, the 99th 
 percentile. We will then compare the latencies across the different tests.
 We expect the the latency to be higher or equal in the virtual cluster. 
@@ -241,13 +238,8 @@ cluster, and observe the resulting behavior. We will then repeat this process
 with the same @crd[s] applied to separate virtual clusters, and observe the
 resulting behavior. We will then compare the two results, and determine whether
 the virtual cluster approach is effective in addressing version conflicts.
-
-
 In @test-crd we can observe the important metadata and spec fields of the 
-@crd which will be used for testing. We intend to replace the `v1` version
-with `v2` in the second @crd, and then attempt to apply both @crd[s] to the 
-same cluster. We will then repeat this process with the same @crd[s] applied
-to separate virtual clusters.
+@crd which will be used for testing. 
 
 #figure([```yaml
   apiVersion: apiextensions.k8s.io/v1
@@ -264,14 +256,13 @@ to separate virtual clusters.
       ...
   ```], caption: [The contents of the test @crd]) <test-crd>
 
-In the first case, we expect the cluster to apply the first @crd, and then
-reject the second @crd, due to it not supporting `v1`. In the second case,
-we expect the cluster to apply both @crd[s], as they are applied to separate
-virtual clusters. We will then verify the presence of both @crd[s] in the
-cluster, and confirm that they are indeed separate versions.
+On a standard Kubernetes cluster, we expect the cluster to apply the first @crd, 
+and then reject the second @crd, due to it not supporting `v1`. With multiple 
+vclusters, we expect both clusters to apply their @crd[s]. We will then verify 
+the presence of both @crd[s] in the cluster, and confirm that they are indeed 
+separate versions.
 
 This test will not be concerned with the functionality of the @crd[s] themselves,
-but rather with the behavior of the cluster when presented with conflicting
-@crd[s]. As such, we will not be testing the functionality of the @crd[s]
-themselves, but rather the behavior of the cluster when presented with
-conflicting @crd[s].
+as there is not backing controller for them, but rather with the behavior of the 
+cluster when presented with conflicting @crd[s]. As such, we will not be testing 
+the functionality of the @crd[s] themselves, but rather the behavior of the cluster when presented with conflicting @crd[s].

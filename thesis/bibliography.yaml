@@ -153,6 +153,19 @@ vcluster-github:
     value: https://github.com/loft-sh/vcluster
     date: 2023-11-23
 
+longhorn:
+  type: Web
+  title: Longhorn
+  url:
+    value: https://longhorn.io/
+    date: 2023-12-03
+
+zookeeper:
+  type: Web
+  title: Apache ZooKeeper
+  url:
+    value: https://zookeeper.apache.org/
+    date: 2023-12-03
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix

@@ -18,14 +18,15 @@ many settings, including development, testing, and production environments.
 
 === Docker
 Docker is a tool that introduced the concept of containers to the masses.
-#footnote(
-  "BSD had a similar feature: jails for a while; however they were not used by the masses, since Linux did not support it.",
-)
+#footnote[
+  BSD had a similar feature: jails for a while; however it never reached mass-market adoption, since Linux did not support it.",
+]
+
 It is a platform for developers and sysadmins to develop, deploy, and run
 applications with containers. Docker is integrated with DockerHub, a registry of
 Docker images, which are pre-built containers that include everything needed to
-run an application. DockerHub is a public registry, but we can also host our own
-private registry.
+run an application. DockerHub is a public registry, but as Docker is a free and 
+open-source software, one can also host theiw own private registry.
 
 While the runtime environment is given with a Docker image, the Docker command
 line interface (CLI) provides many options that allow us to customize the
@@ -87,8 +88,8 @@ a more complex way.
 A Kubernetes cluster is a set of machines, called nodes, that run containerized
 applications managed by Kubernetes. By design, unlike Docker, Kubernetes
 operates on a cluster level, not on a single machine. Kubernetes uses a
-master-slave architecture, where the master is a controller is responsible for
-managing the cluster, and the slave is a worker is responsible for running the
+controller-worker architecture, where the controller is responsible for
+managing the cluster, and the worker is responsible for running the
 applications.
 
 Sometimes it is beneficial to run a Kubernetes cluster on a single machine, or
@@ -99,9 +100,9 @@ achieved by other means and not necessary in the cluster.
 Preferably, Kubernetes clusters are deployed with multiple controller nodes,
 which is called a high-availability cluster. This allows for redundancy, and
 makes the cluster more resilient to failures. Worker nodes are usually deployed
-with multiple nodes too, to allow for horizontal scaling. In case of a worker
-node failure, the master node will automatically reschedule the failed pods on a
-healthy node.
+as multiple nodes too, to allow for horizontal scaling. In case of a worker
+node failure, the master node will automatically reschedule the now also failed
+workloads onto a healthy worker node.
 
 === Kubernetes Platforms
 
@@ -308,10 +309,9 @@ the use case is.
 
 The most common Kubernetes Operators can be found in the OperatorHub@operatorhub,
 which is a registry of operators. It is maintained by Red Hat, and is a part of
-the @olm [#ref(<olm-section>)]. OperatorHub is a
-great place to find operators for common use cases, such as databases, message
-queues, and monitoring solutions. It provides `helm` charts for easy
-installation.
+the @olm [#ref(<olm-section>)]. OperatorHub is a great place to find operators 
+for common use cases, such as databases, message queues, and monitoring
+solutions. It provides `helm` charts for easy installation.
 
 #figure(
   image("../../figures/kubernetes-deployment-example.excalidraw.svg"),
@@ -336,9 +336,9 @@ The most obvious of them is cloud infrastructure. Many commercial "container
 running" solutions use Kubernetes under the hood. Larger organizations can use
 Kubernetes to optimize their costs and response times.
 
-The widespread adoption of Kubernetes gave way to a newfound hype to the
+The widespread adoption of Kubernetes gave way to a newfound trend to the
 microservice architecture, that is well known and loved. Kubernetes allows for
-never-before seen
+never-before seen flexibility, and it is a great tool for running microservices.
 
 == vCluster
 
@@ -392,21 +392,22 @@ however it introduces some limitations.
 3. Custom schedulers cannot be used.
 
 To overcome these limitations, vCluster can be configured to use a dedicated
-scheduler for each virtual cluster. It can be done by setting these variables in
-the virtual cluster's `values.yaml` file:
-#figure(caption: "vCluster Scheduler Configuration")[
-  ```yaml
-    sync:
-      nodes:
-        enabled: true
-        enableScheduler: true
-        # Either syncAllNodes or nodeSelector is required
-        syncAllNodes: true
-    ```
-]
+scheduler for each virtual cluster. 
+// #figure(caption: "vCluster Scheduler Configuration")[
+//   ```yaml
+//     sync:
+//       nodes:
+//         enabled: true
+//         enableScheduler: true
+//         # Either syncAllNodes or nodeSelector is required
+//         syncAllNodes: true
+//     ```
+// ]
 If the `PersistentVolumeClaim`-s are synced too, the virtual cluster's scheduler
-will be able to make storage-aware scheduling decisions.==== Note on
-Multi-Namespace Sync This feature is in alpha state, and is not enabled by
+will be able to make storage-aware scheduling decisions.
+
+==== Note on Multi-Namespace Sync 
+This feature is in alpha state, and is not enabled by
 default, therefore it was not used for testing in this thesis.
 
 The multi namespace sync feature allows vCluster to create and manage namespaces
@@ -419,10 +420,10 @@ host cluster, vCluster will only create fake nodes for the nodes, that have pods
 from the virtual cluster scheduled on them.
 
 There are other options for node syncing:
-- *Real Nodes* -- vCluster will copy the nodes' information from the host cluster
-  to the virtual cluster. This will work similarly to the fake nodes, because the
-  virtual cluster will only have nodes for the nodes that have pods from the
-  virtual cluster scheduled on them.
+- *Real Nodes* -- vCluster will copy the nodes' metadata from the host cluster
+  to the virtual cluster. Not all of the nodes will be visible in the virtual
+  cluster, only the ones that have pods from the virtual cluster scheduled on
+  them, similarly to the default behavior.
 - *Real Nodes All* -- vCluster will copy all nodes from the host cluster to the
   virtual cluster. This is useful when DaemonSets are used in the virtual cluster.
 - *Real Nodes Label Selector* -- vCluster will only sync nodes that match a
@@ -459,9 +460,11 @@ members, and Red Hat (the makers of @olm). @olm extends Kubernetes' native API
 and CLI to provide a declarative way to manage Operators and their dependencies
 in a cluster.
 
-To solve the version conflict the Dependency Resolution can be used. Dependency
-Resolution solves version mismatch problems by installing the adequate version
+To solve the version conflict dependency resolution can be used. Dependency
+resolution solves version mismatch problems by installing the adequate version
 of the operator that satisfies all of the version reuqirements in the cluster.
+This relies on the the operator follows the semantic versioning scheme, and
+declares its dependencies correctly.
 
 For example: if we have two operators: `foo` and `bar` that both depend on
 `baz`, @olm will look at the version requirements of `foo` and `bar`. If `foo`
@@ -482,7 +485,7 @@ some cloud infrastructure. OpenStack is a popular open-source cloud
 infrastructure software, that is used by many organizations. When using
 OpenStack the maintainer has the option to split the installation into multiple
 projects, that can be managed separately. This allows for the creation of a
-dedicated project for each cluster, which can be used to isolate the different
+dedicated project for each cluster, which then can be used to isolate the different
 versions of the operator.
 
 This solution is not sufficient, since it removes the ability to dynamically
@@ -496,9 +499,9 @@ However, vCluster considers the @crd[s] high-level components, as we have seen
 in @vcluster-arch-fig and does not sync them to the host cluster. Since the
 @crd[s] are not synced to the host cluster, they do not appear in the host
 cluster, only in the virtual control plane. This leads to the conclusion, that
-the @crd[s] are isolated to the virtual cluster.
+we may have conflicting @crd[s], that are isolated to their virtual cluster.
 
-== PostgreSQ
+== PostgreSQL
 
 PostgreSQL, an open-source relational database management system (RDBMS), stands 
 as a robust and versatile solution within the realm of data management. Developed 
@@ -513,7 +516,7 @@ flexibility. With a mature and active community contributing to its development,
 PostgreSQL continually evolves, incorporating advanced features such as advanced 
 indexing mechanisms, full-text search capabilities, and support for complex data 
 types, positioning itself as a pivotal element in the landscape of relational 
-databases. #cite(<postgres-wikipedia>) In this thesis we will utilize PostgreSQL 
+databases#cite(<postgres-wikipedia>). In this thesis we will utilize PostgreSQL 
 as an example application, to showcase the performance and capabilities of 
 vCluster.
 
@@ -536,5 +539,5 @@ different components in a distributed system. Its publish-subscribe model and
 durable storage capabilities make it ideal for building scalable and resilient 
 data pipelines. Kafka's ability to handle massive volumes of data with low 
 latency has made it a go-to solution for applications ranging from real-time 
-analytics to log aggregation. #cite(<kafka-wikipedia>) It will be used as an
-example application too, to showcase the performance of vCluster.
+analytics to log aggregation#cite(<kafka-wikipedia>). It will be used as an
+example application too.

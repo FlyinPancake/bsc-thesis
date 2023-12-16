@@ -44,10 +44,6 @@ on a single pod with limited memory resources. The data presented here is an
 aggregation of 10 `pgbench` runs with the same parameters, excluding the lowest
 and highest values.
 
-The left side of the graph displays the individual @tps values, while the right
-side showcases the box plot representation of the data. With 10 measurements, we
-can estimate the @tps values with a certain level of confidence.
-
 In the same test run, we also measured the performance of read-only (@ro)
 operations. For this particular test case, we utilized 20 clients and 1000
 transactions per client. To distribute the requests among the @ro replicas of
@@ -85,7 +81,7 @@ box plot titled "bare-metal" is the performance of PostgreSQL running on a
 conventional Kubernetes cluster, while the right side "vcluster" shows the 
 performance of PostgreSQL running on the virtual Kubernetes cluster. The @tps
 values are around $10$-$15%$ lower than the baseline, which is a significant
-difference. However, the variability of the @tps values are increased.
+difference. The variability of the @tps values are also increased.
 
 This behaviour is also observed to a lesser effect in the @ro tests, which are
 presented in @initial-ro-vcluster. In the observed virtual cluster, it is
@@ -123,7 +119,7 @@ We can observe that the virtual cluster and the host cluster caught up to each
 other. This we attribute to the fact that the PostgreSQL cluster in the virtual
 Kubernetes cluster and cluster in the host Kubernetes cluster now access to the
 same resource limits. The syncer might have a higher performance overhead for
-writing @persistentvolume[s] than reading them.
+writing #gls("persistentvolume", suffix: "s", long: true) than reading them.
 
 #figure(caption: [Increased resource limits for PostgreSQL])[
   #image("/figures/plots/postgres/limited/ro.svg", width: 100%)
@@ -136,38 +132,37 @@ database. We will now use this feature to measure the performance of PostgreSQL
 with different scales. We will use the same scale factors for the virtual
 cluster and the host cluster.
 
-As discussed in the context of @pgbench-performance-analysis, a battery of tests was conducted across scale factors (@sf[s]) ranging from $10$ to $200$.
+As discussed in the context of @pgbench-performance-analysis, a battery of tests were conducted across @sf[s] ranging from $10$ to $200$.
 The ensuing section aims to present the outcomes of these tests. Notably, at
 the lower scale factors, there is an observable alternation in performance
 between the virtual cluster and the host cluster. Although this fluctuation is
 attributed to statistical noise, it is evident that no substantive distinctions
 are discernible between the two deployment methodologies.
 
-In the subsequent segment, identified as @sf10rw-fig, the ratios of transaction
-per second (@tps) values are juxtaposed with the baseline, albeit reflecting
-relatively diminished values. It is pertinent to highlight that the host 
-cluster consistently outperforms the virtual cluster. This performance contrast 
-could plausibly be ascribed to the necessity for disk input/output (IO) to 
-traverse the syncer in the virtual cluster configuration.
+In the subsequent segment, identified as @sf10rw-fig, the ratios of @tps values 
+align with the baseline measurements, albeit reflecting relatively diminished 
+values. It is important to highlight that the bare-metal cluster consistently 
+outperforms the virtual cluster. This performance contrast  could plausibly be 
+ascribed to the necessity for traversing the syncer in the virtual cluster 
+  configuration.
 
 #figure(caption: [@rw performance for @sf=10], image("/figures/plots/postgres/scales/rw_10.svg", width: 100%) ) <sf10rw-fig>
 
 Likewise, in the context of @sf10ro-fig, a discernible trend emerges wherein 
-the transaction per second (@tps) values for read-only (@ro) operations surpass 
-those observed in @sf10rw-fig. This outcome aligns with expectations since @ro 
-tests exclude write operations to the disk. Notably, despite the reduced 
-scaling factor, noteworthy enhancements in @tps values are evident compared to 
-the baseline (with a scale factor of $100$). This enhancement can be attributed 
-to optimizations implemented in the scaled tests, where the number of clients 
-was proportionally adjusted to complement the scale factor, as elucidated in 
-@pgbench-performance-analysis.
+the @tps values for @ro operations surpass those observed in @sf10rw-fig. This 
+outcome aligns with expectations since @ro tests exclude write operations to the 
+disk. Notably, despite the reduced scaling factor, noteworthy enhancements in 
+@tps values are evident compared to the baseline (with a scale factor of $100$). 
+This enhancement can be attributed to optimizations implemented in the scaled 
+tests, where the number of clients was proportionally adjusted to complement the 
+scale factor, as elucidated in @pgbench-performance-analysis.
 
 Furthermore, with these optimizations, a convergence is observed between the 
 means and medians, with minimal discernible differences within the margin of 
 error. Variability patterns are also comparable, albeit with a slightly higher 
-variability observed in the host cluster. This divergence is postulated to stem 
-from both clusters being capable of delivering the maximum allocation of 
-resources to the database.
+variability observed in the host cluster. This divergence may be attributed to 
+both clusters being capable of delivering the required allocation of resources
+to the database.
 
 #figure(caption: [@ro performance for @sf=10], image("/figures/plots/postgres/scales/ro_10.svg", width: 100%) ) <sf10ro-fig>
 
@@ -194,10 +189,9 @@ cluster. We can attribute this to the fact that the end-to-end nature of
 is especially true for the virtual cluster as we add an additional layer
 of indirection. The medians and means return to similar values to each other.
 
-Vcluster seems to be able to keep up with the host cluster, providing similar
+`vcluster` seems to be able to keep up with the host cluster, providing similar
 performance to bare-metal. This is an expected result, as the virtual cluster
-and the host cluster have the same resource limits. The syncer might have a
-higher performance overhead for writing @persistentvolume[s] than reading them.
+and the host cluster have the same resource limits. 
 
 #figure(caption: [@ro performance for @sf=50], image("/figures/plots/postgres/scales/ro_50.svg", width: 100%) ) <sf50ro-fig>
 
@@ -239,8 +233,8 @@ a problem for the host cluster, as the Strimzi operator can access the real node
 
 #figure(image("/figures/plots/kafka/latency.svg", width: 100%), caption: [Latencies of Kafka]) <kafka-latency>
 In @kafka-latency, we present means of different latency measurements for the
-virtual cluster and the host cluster. We used the different test cases described
-in @kafka-sec to create a combined plot of the different measurements. We can
+virtual cluster and the host cluster. When addressing latency, lower values are 
+desireable.We used the different test cases described in @kafka-sec to create a combined plot of the different measurements. We can
 observe that the two performance values are similar, within the margin of error.
 This is expected, as the virtual cluster and the host cluster have the same
 resource limits. The syncer might have some performance overhead, but it is limited.
