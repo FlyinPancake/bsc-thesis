@@ -13,9 +13,6 @@
 #show heading: set block(above: 1.4em, below: 1em)
 #set page(paper: "a4", margin: (y: 2.5cm, inside: 3.5cm, outside: 2.5cm))
 
-#page[
-  #todo_outline
-]
 #include "pages/project.typ"
 #include "pages/titlepage.typ"
 #set page(numbering: "I")

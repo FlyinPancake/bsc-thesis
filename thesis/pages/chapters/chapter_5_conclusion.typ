@@ -1,41 +1,58 @@
 #import "@preview/big-todo:0.2.0": todo
 
 = Conclusion
-`vcluster` is a great tool for solving the problem of
-multi-tenancy, @crd version conflicts in a cluster, and
-it does this with very respectable performance. It is
-also a great tool for testing and development of
-Kubernetes applications.
 
-As outlined in @postgres-test-exec-sec, the performance of vcluster is
-very good, and it is able to support a large number of clients connected to it.
-As we progressed through the testing, we found that the PostgreSQL operator
-was really slow to remove databases from the cluster. This might be a problem
-when developing applications for Kubernetes, as it might take a long time to
-reset the state of the cluster between tests. This is easier to do with
-vcluster as it is able to create and destroy clusters very quickly, and
-it is also a remarkably competant tool for switching between contexts, when 
-working with multiple clusters.
 
-Later in @kafka-test-exec-sec we found that vcluster was able to run a Kafka
-cluster with latencies that were comparable to a real cluster. In this case, 
-we found that the operator responsible for managing the Kafka cluster was
-built in a way that made it tedious to use with vcluster. This is not a problem
-with vcluster, but it is something that should be considered when using vcluster
-with some operators.
+As detailed in @postgres-test-exec-sec, the performance of `vcluster` demonstrates 
+its prowess, accommodating a substantial number of connected clients effectively. 
+Throughout the testing phase, however, an observation was made regarding the 
+PostgreSQL operator's sluggishness in removing databases from the cluster. This 
+potential bottleneck could pose challenges during application development for 
+Kubernetes, where swift cluster state resets between tests are crucial. In this 
+context, `vcluster` stands out as a more efficient tool, enabling rapid creation 
+and destruction of clusters. Additionally, its proficiency in seamlessly switching 
+between contexts proves advantageous when managing multiple clusters concurrently.
 
-In a scenario with a small number of developers sharing a single development cluster, virtual clusters can be used to provide a dedicated cluster for each developer. This allows developers to work in isolation, without having to worry about other developers breaking their work.
+Subsequent exploration, as documented in @kafka-test-exec-sec, revealed that 
+`vcluster` performed admirably in running a Kafka cluster with latencies 
+comparable to a physical cluster. It is worth noting that challenges were 
+encountered with the Kafka cluster manager operator, which was intricately 
+designed and posed certain inconveniences when utilized in conjunction with 
+`vcluster`. It is important to recognize that such challenges are not inherent to 
+`vcluster` itself but may arise with specific operators.
 
+In @crd-conflict-sec we explored the potential for vcluster to solve the @crd 
+version conflict problem. This solution may be useful for some other use cases as 
+well, but it is not a general solution, as it requires the operator to be aware of 
+the virtual cluster. It is also not a complete solution, as it does not solve the 
+problem of multiple versions of the same CRD being used in the same cluster.
 
 == Future Work
 
-#todo[Expand on future work]
-There are a number of areas that were not covered by this work. These include, but are not limited to:
-- Compatibility with the most popular Kubernetes operators
-- Compatibility with other Kubernetes distributions - although this is unlikely to be a problem, as vcluster was built to be distribution agnostic
-- Behaviour and performance of vcluster when used by multiple users
-- Performance limits for entire virtual clusters
-- Security of vcluster
-  - How to prevent users from accessing other users' virtual clusters
-  - How to prevent users from accessing the host cluster
-  - How are performance limits enforced
+Several intriguing avenues lie adjacent to the current investigation. For 
+instance, exploring the performance of `vcluster` under conditions involving a 
+substantial number of users or a high volume of virtual clusters would provide 
+valuable insights. Given the versatility mentioned in the documentation, assessing 
+how `vcluster` performs across different certified Kubernetes distributions, 
+particularly focusing on officially supported ones like `eks` and `k0s`, holds 
+notable interest.
+
+The compatibility of `vcluster` with various Kubernetes operators is another 
+intriguing dimension to explore. As observed with the Strimzi operator for Apache 
+Kafka, investigating the compatibility of popular Kubernetes operators with 
+`vcluster` would shed light on the platform's adaptability to diverse use cases.
+
+Delving into the performance limits and guarantees of `vcluster` stands as a 
+worthwhile pursuit. Understanding how resource limits are enforced and their 
+impact on virtual cluster performance would contribute to a comprehensive 
+assessment of `vcluster` capabilities.
+
+Lastly, an exploration into the security aspects of `vcluster` for facilitating 
+multi-tenancy is a compelling avenue. As conventional multi-tenancy based solely 
+on namespaces may pose security concerns, investigating how `vcluster` can offer a 
+secure multi-tenancy solution, ensuring users cannot access each other's virtual 
+clusters or the host cluster, would be valuable. Assessing the potential 
+vulnerabilities and limitations, such as the possibility of breaking out of the 
+virtual control plane and accessing the host cluster, would further enhance our 
+understanding of `vcluster`'s security architecture.
+

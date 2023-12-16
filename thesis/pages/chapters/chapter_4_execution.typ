@@ -254,7 +254,7 @@ percentile measurements in @kafka-p90.
 
 #figure(image("/figures/plots/kafka/p99.svg", width: 100%), caption: [99#super[th] percentile of Kafka's latencies]) <kafka-p99>
 
-== Functionality Testing -- CRD conflict
+== Functionality Testing -- CRD conflict <crd-conflict-sec>
 
 In this section, we aim to assess the efficacy of `vcluster` in resolving the 
 @crd version conflict issue. For this evaluation, we will utilize the @crd 

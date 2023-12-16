@@ -44,5 +44,10 @@ associated with Kubernetes clusters. Notably, the security implications of
 virtual clusters will not be explored in this thesis, as this topic warrants 
 dedicated attention in a separate research endeavour.
 
-#import "@preview/big-todo:0.2.0": todo
-#todo[Thesis structure]
+The thesis will be structured as follows. Chapter 2 will provide a theoretical
+background on containerization, Kubernetes, virtual clusters, and related
+concepts. Chapter 3 will present the methodology used to conduct the study,
+including the experimental setup and the metrics used to evaluate the
+performance and functional characteristics of virtual clusters. Chapter 4 will
+present the resuts of the study. Finally, Chapter 5 will conclude the thesis
+with a discussion of the findings and an outlook on future research.  
