@@ -3,8 +3,9 @@
     #set text(lang: "hu") 
     = Kivonat
     
-    A szakdolgozat célja a virtuális Kubernetes klaszterekkel kapcsolatos jelenlegi állapot felmérése, különös tekintettel a vcluster-re. A virtuális klaszterek ebben az összefüggésben egyetlen Kubernetes klaszteren belül létrehozott elszigetelt Kubernetes klaszterekre utalnak. Ez a megközelítés előnyösnek bizonyul tesztelési célokra, különböző felhasználók számára elszigetelt környezetek létrehozására és verziókonfliktusok kezelésére.
-    
+    A szakdolgozat célja a virtuális Kubernetes klaszterekkel 
+    kapcsolatos jelenlegi állapot felmérése. A virtuális klaszterek ebben az összefüggésben egyetlen Kubernetes klaszteren belül létrehozott elszigetelt Kubernetes klaszterekre utalnak. Ez a megközelítés előnyösnek bizonyul tesztelési célokra, különböző felhasználók számára elszigetelt környezetek létrehozására és verziókonfliktusok kezelésére. A vcluster egy virtuális Kubernetes klaszter implementáció, amelyet ez a szakdolgozat részletesen vizsgál.
+
     A szakdolgozat első része egy átfogó irodalomkutatást tartalmaz a Kubernetes ökoszisztémáról, és különösen a vcluster funkcióiról és képességeiről. Ezen ismeretek alapul szolgálnak a vcluster-el kapcsolatos elvárások meghatározásához, és biztosítja a szélesebb Kubernetes ökoszisztéma alapos megértését.
 
     Az irodalomkutatást követő szakasz részletesen ismerteti a virtuális klaszterek teljesítmény és funkcionalitás értékeléséhez végzett tesztek tervezését. Ez magában foglalja a teszteléshez használt eszközökkel való megismerkedést, a kiválasztott tesztesetek ismertetését és a kiválasztásuk mögötti indoklást, valamint a tesztelési környezet részletes leírását.
@@ -18,7 +19,7 @@
 #page[
     = Abstract
     
-    The primary objective of this thesis is to evaluate the current state of the art in the realm of virtual Kubernetes clusters, with a specific focus on vcluster. Virtual clusters, in this context, refer to the creation of isolated Kubernetes clusters within a single Kubernetes cluster. This approach proves beneficial for testing purposes, establishing isolated environments for various users, and mitigating version conflicts.
+    The primary objective of this thesis is to evaluate the current state of the art in the realm of virtual Kubernetes clusters. Virtual clusters, in this context, refer to the creation of isolated Kubernetes clusters within a single Kubernetes cluster. This approach proves beneficial for testing purposes, establishing isolated environments for various users, and mitigating version conflicts. In particular, this thesis examines vcluster, a virtual Kubernetes cluster implementation.
 
 The initial section of the thesis comprises a comprehensive literature review covering the Kubernetes ecosystem and specifically delving into the features and capabilities of vcluster. This review serves as a foundation for establishing expectations related to vcluster and ensures a thorough understanding of the broader Kubernetes landscape.
 

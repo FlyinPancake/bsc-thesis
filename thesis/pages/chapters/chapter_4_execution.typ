@@ -81,13 +81,12 @@ conducted inside a virtual Kubernetes cluster compared to the baseline. The left
 box plot titled "bare-metal" is the performance of PostgreSQL running on a 
 conventional Kubernetes cluster, while the right side "vcluster" shows the 
 performance of PostgreSQL running on the virtual Kubernetes cluster. The @tps
-values are around $10$-$15%$ lower than the baseline, which is a significant
+values are $7.82%$ lower for the baseline, which is a significant
 difference. The variability of the @tps values are also increased.
 
-This behaviour is also observed to a lesser effect in the @ro tests, which are
-presented in @initial-ro-vcluster. In the observed virtual cluster, it is
-evident that the throughput values (@tps) exhibit an increment similar to the
-improvements seen from @initial-rw-baseline to @initial-ro-baseline.
+This behaviour is also observed in the @ro tests, which are
+presented in @initial-ro-vcluster. The @tps values decrease by $9.11%$ when 
+running on the virtual cluster. 
 
 #figure(
   caption: [Initial @ro @tps measured by `pgbench` inside a virtual Kubernetes cluster],
@@ -189,7 +188,7 @@ result, as the virtual cluster is expected to be slower than the host
 cluster. We can attribute this to the fact that the end-to-end nature of
 `pgbench` will naturally lead to higher variability in the results. This
 is especially true for the virtual cluster as we add an additional layer
-of indirection. The medians and means return to similar values to each other.
+of indirection. The medians and means return to comparable values to each other.
 
 `vcluster` seems to be able to keep up with the host cluster, providing similar
 performance to bare-metal. This is an expected result, as the virtual cluster

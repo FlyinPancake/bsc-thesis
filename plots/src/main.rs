@@ -16,7 +16,7 @@ use data::{KafkaTestResult, PostgresTestResult};
 type KafkaTestContainer = HashMap<String, Vec<KafkaTestResult>>;
 
 fn main() -> color_eyre::Result<()> {
-    // baseline_graphs()?;
+    baseline_graphs()?;
     // scaled_tests();
 
     // kafka_plots();

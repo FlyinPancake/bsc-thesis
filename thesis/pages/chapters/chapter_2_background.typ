@@ -539,5 +539,5 @@ different components in a distributed system. Its publish-subscribe model and
 durable storage capabilities make it ideal for building scalable and resilient 
 data pipelines. Kafka's ability to handle massive volumes of data with low 
 latency has made it a go-to solution for applications ranging from real-time 
-analytics to log aggregation#cite(<kafka-wikipedia>). It will be used as an
-example application too.
+analytics to log aggregation#cite(<kafka-wikipedia>). In this thesis we will
+utilize Apache Kafka as an example application, for our latency benchmarks.
