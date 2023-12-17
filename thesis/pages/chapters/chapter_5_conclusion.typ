@@ -2,6 +2,11 @@
 
 = Conclusion
 
+We conducted tests to assess the performance and usability of `vcluster` in
+various scenarios. The results of these tests indicate that `vcluster` is a
+promising tool for Kubernetes developers and operators. It is a lightweight
+solution that can be used to create and manage virtual clusters with minimal
+overhead.
 
 As detailed in @postgres-test-exec-sec, the performance of `vcluster` demonstrates 
 its prowess, accommodating a substantial number of connected clients effectively. 
@@ -27,8 +32,6 @@ well, but it is not a general solution, as it requires the operator to be aware 
 the virtual cluster. It is also not a complete solution, as it does not solve the 
 problem of multiple versions of the same CRD being used in the same cluster.
 
-== Future Work
-
 Several intriguing avenues lie adjacent to the current investigation. For 
 instance, exploring the performance of `vcluster` under conditions involving a 
 substantial number of users or a high volume of virtual clusters would provide 
@@ -51,8 +54,5 @@ Lastly, an exploration into the security aspects of `vcluster` for facilitating
 multi-tenancy is a compelling avenue. As conventional multi-tenancy based solely 
 on namespaces may pose security concerns, investigating how `vcluster` can offer a 
 secure multi-tenancy solution, ensuring users cannot access each other's virtual 
-clusters or the host cluster, would be valuable. Assessing the potential 
-vulnerabilities and limitations, such as the possibility of breaking out of the 
-virtual control plane and accessing the host cluster, would further enhance our 
-understanding of `vcluster`'s security architecture.
+clusters or the host cluster, would be valuable. 
 

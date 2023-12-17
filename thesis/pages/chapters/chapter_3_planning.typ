@@ -20,7 +20,7 @@ there is no such tool, so one had to be created.
 
 Virtual clusters are realized by a virtual control plane and a syncer #cite(<vcluster>).
 The virtual control plane is wholly responsible for the performance of "high-level"
-resources, such as Deployments, @crd[s], etc. These resources' performance is
+resources, such as Deployments, @crd[s], etc. These resources' performance
 can be compared to the performance of the same resources in a conventional
 Kubernetes cluster.
 
@@ -44,14 +44,15 @@ The testing environment consists of three virtual machines. These virtual
 machines make up a Kubernetes cluster. Two of the virtual machines are worker
 nodes, these nodes run the applications that are being tested. They have 32
 cores and 64GB of RAM each. The third system is the controller node, this node
-runs the virtual control plane. It has 16 cores and 32GB of RAM. All the virtual
+runs the control plane. It has 16 cores and 32GB of RAM. All the virtual
 machines run Ubuntu 22.04, run on OpenStack, and have AMD EPYC Rome CPUs.
 
 This setup represents a small private cloud cluster. The Kubernetes distribution
 that is used is `k3s` #cite(<k3s>), the same which is the default Kubernetes
-controller backing `vclutster` #cite(<vcluster>). Each machine has a single 
+controller backing `vcluster` #cite(<vcluster>). Each machine has a single 
 boot disk. The boot disk is a 160GB volume, which is more than enough for the 
-operating system and the applications that are being tested. The boot disk is an SSD volume, which is the recommended volume type for boot disks in OpenStack. 
+operating system and the applications that are being tested. The boot disk is 
+an SSD volume, which is the recommended volume type for boot disks in OpenStack. 
 For use with @persistentvolume[s], the storage goes trough longhorn 
 #cite(<longhorn>), which is a distributed block storage solution for Kubernetes. 
 Longhorn uses the boot disks as storage, so the boot disks are also used for the 
@@ -64,7 +65,7 @@ predefined set of commands on a PostgreSQL database and returns the most
 important metrics to the user.
 
 To use `pgbench` to benchmark PostgreSQL, we need to determine the size of the
-test data. `pgbench` has an initialization mode, which creates the test data. It
+test database. `pgbench` has an initialization mode, which creates the test data. It
 accepts a parameter called `scale`, which determines the size of the test data.
 the default value is 1. When the value of `scale` is 1, the test database's
 structure is as follows in #ref(<pgbench-scale-1>).
@@ -97,9 +98,8 @@ nodes are not simply PostgreSQL pods, but rather a main pod and $2$ replica
 pods. The data replication is not done by Kubernetes, but rather by PostgreSQL
 itself, using the streaming replication feature #cite(<postgres-replication>).
 We cannot commit changes to the replica pods, but we can read from them, so they
-can be useful as read-only databases too beside redundancy. If for whatever 
-reason the main pod fails, one of the replica pods can be promoted to be the 
-main pod.
+can be useful as read-only databases too beside redundancy. If  the main pod fails
+for any reason, one of the replica pods can be promoted to become the main pod.
 
 #figure(caption: [PostgreSQL cluster with a main pod and two replica pods])[
   #image("../../figures/postgres-cluster.excalidraw.svg", width: 80%)
@@ -133,9 +133,9 @@ established as $"scaling_factor / 10"$. This parameter holds significance, as
 setting it excessively high could overwhelm the system. Conventionally, the
 number of clients scales in tandem with the size of the database.
 
-In our testing environment, we will be running separate worker and controller
+In our testing environment, we are running separate worker and controller
 nodes, so we will be able to measure the performance unobstructed by `pgbench`'s
-own resource usage. We will be running the database cluster on the worker nodes,
+own resource usage, as we will are running the database cluster on the worker nodes,
 and `pgbench` on the controller node.
 
 == Apache Kafka Performance <kafka-sec>
@@ -147,24 +147,29 @@ operational priorities.
 === Benchmarking Kafka
 Given Kafka's predominant use in diverse production environments, each use case 
 entails unique configurations, rendering the creation of a generic benchmarking 
-tool challenging. Unlike PostgreSQL, which has a tool like pgbench, Kafka lacks a 
-comparable standardized benchmarking tool. Consequently, a custom tool, named 
-`kafka-benchmark`, was developed for this purpose. Initially, the plan was to 
-implement a Python script for producing and consuming Kafka messages. However, the 
-performance of this script would have proven unsatisfactory, 
-prompting a shift to the development of the benchmarking tool in Rust#cite(<rust>).
+tool challenging. Unlike PostgreSQL, which has a general benchmarking tool, 
+`pgbench`, Kafka lacks a comparable standardized benchmarking tool. Consequently,
+a custom tool, named `kafka-benchmark`, was developed for this purpose. 
+Initially, the plan was to implement a Python script for producing and consuming
+Kafka messages. However, the performance of this script would have proven 
+unsatisfactory, prompting a shift to the development of the benchmarking tool 
+in Rust#cite(<rust>).
 
 The kafka-benchmark tool leverages the `librdkafka`#cite(<librdkafka>) C/C++ 
 library through the `rdkafka`#cite(<rust-rdkafka>) crate#footnote[In the context 
 of Rust programs, libraries and packages are referred to as crates] to interface 
 with Kafka. By doing so, it capitalizes on the performance and features provided 
-by librdkafka, while the Rust language ensures correctness and reliability for the  benchmarking tool. Rust is a systems programming language, which is
+by librdkafka, while the Rust language ensures correctness and reliability for 
+the  benchmarking tool. Rust is a systems programming language, which is
 designed for performance and reliability. It differs from popular languages such
 as C and C++ in that it is memory safe by default, and from languages such as
 Java and Go in that it does not have a garbage collector. Having no garbage
-collector means that Rust does not have iterfere with the application's
-execution to free up memory. This is important for benchmarking, as the
-application does not have to wait for the garbage collector to free up memory.
+collector means that Rust does not iterfere with the application's
+execution to free up memory. Combining these two aspects, Rust makes for an 
+outstanding choice for our benchmarking tool to be written in. These 
+characteristics are crucially important for benchmarking, as any bechmarking 
+tool should not interfere with the application's execution, otherwise the
+results would be not be accurate.
 
 
 // #figure(caption: [Architecture of the Kafka cluster])[
@@ -186,12 +191,12 @@ Strimzi#cite(<strimzi>) operator.
 
 === Performance Analysis
 
-Our analysis will be concerned with the latency and throughput of Kafka. We will
-be measuring the latency and throughput of the Kafka cluster, as well as the
-latency and throughput of the virtual cluster. During the testing, we will be
-using different numbers of clients, and different message sizes. The test 
-parameters are in @kafka-test-parameters. We will be using all of the possible 
-triplets of the test values, and for every triplet, we will be running the test.
+Our analysis is concerned with the latency of Kafka. We measure the end-to-end
+latency in the conventional Kubernetes cluster, as well as the latency in the
+virtual cluster. During the testing, we use different numbers of clients,
+and different message sizes. The test parameters are presented in 
+@kafka-test-parameters. We take all of the possible triplets of the test
+values, and we run tests for each of them.
 
 #figure(caption: [The test parameters for Kafka])[
   #table(
@@ -209,10 +214,10 @@ triplets of the test values, and for every triplet, we will be running the test.
 
 Each test will run for $300$ seconds and will be repeaterd $3$ times.
 We measure the latency of every message (after a warm-up period), and then
-we use HdrHistrogram @hdrhistogram to aggregate the latencies. We will be
-using the mean, the 50th percentile, the 90th percentile, the 99th 
+we use HdrHistrogram@hdrhistogram to aggregate the latencies. We record
+the mean, the 50th percentile, the 90th percentile and the 99th 
 percentile. We will then compare the latencies across the different tests.
-We expect the the latency to be higher or equal in the virtual cluster. 
+We expect the latency to be higher or equal in the virtual cluster. 
 Due to the nature of this test, we might see some outliers in the latency
 measurements. 
 
@@ -232,13 +237,13 @@ applications into distinct virtual clusters. This functionality however, has not
 been formally documented nor verified. Our objective is to confirm the presence
 and effectiveness of this functionality through producing a proof of concept.
 
-Our proof of concept will consist of two distinct @crd[s], each with a
-conflicting version. We will then attempt to apply both @crd[s] to a shared
-cluster, and observe the resulting behavior. We will then repeat this process
-with the same @crd[s] applied to separate virtual clusters, and observe the
-resulting behavior. We will then compare the two results, and determine whether
-the virtual cluster approach is effective in addressing version conflicts.
-In @test-crd we can observe the important metadata and spec fields of the 
+Our proof of concept consist of two distinct @crd[s], each with conflicting
+versions. We attempt to apply both @crd[s] to a shared cluster, and observe
+the resulting behavior. Then we repeat this process with the same @crd[s]
+applied to separate virtual clusters, and observe the resulting behavior.
+The results are then compared, and we determine whether the virtual 
+cluster approach is effective in addressing version conflicts. In 
+@test-crd we can observe the important metadata and spec fields of the 
 @crd which will be used for testing. 
 
 #figure([```yaml
@@ -256,13 +261,13 @@ In @test-crd we can observe the important metadata and spec fields of the
       ...
   ```], caption: [The contents of the test @crd]) <test-crd>
 
-On a standard Kubernetes cluster, we expect the cluster to apply the first @crd, 
+With a conventional Kubernetes cluster, we expect the cluster to apply the first @crd, 
 and then reject the second @crd, due to it not supporting `v1`. With multiple 
 vclusters, we expect both clusters to apply their @crd[s]. We will then verify 
 the presence of both @crd[s] in the cluster, and confirm that they are indeed 
 separate versions.
 
 This test will not be concerned with the functionality of the @crd[s] themselves,
-as there is not backing controller for them, but rather with the behavior of the 
+as there is no backing controller for them, but rather with the behavior of the 
 cluster when presented with conflicting @crd[s]. As such, we will not be testing 
 the functionality of the @crd[s] themselves, but rather the behavior of the cluster when presented with conflicting @crd[s].

@@ -4,17 +4,18 @@
 
 == PostgreSQL <postgres-test-exec-sec>
 
-To establish a baseline for comparison, we utilized PostgreSQL as the reference
-database. We conducted several `pgbench` tests to assess the performance of
-PostgreSQL. However, the results obtained were not entirely reliable. This is
+To establish a baseline for comparison, we utilize PostgreSQL as the reference
+database. We conduct several `pgbench` tests to assess the performance of
+PostgreSQL. However, the results obtained are not entirely reliable. This is
 because `pgbench` measures the end-to-end performance of the database, including
 factors such as network latency and client-side operations. Additionally, the
-results were not reproducible due to the influence of machine load on database
-performance. Therefore, the obtained results lack conclusiveness, as they are
-neither reproducible nor stable. This will not be an issue for the evaluation of
-the virtual cluster, since we will run the same tests on the same hardware.
-In this chapter we present results in the form of box plots, with the small 
-addition of the mean line (dashed) next to the median line (solid).
+results are not reliably reproducible due to the influence of machine load on
+database performance. Therefore, the obtained results lack conclusiveness, as
+they are neither reproducible nor stable. This will not be an issue for the 
+evaluation of the virtual cluster, since we will run the same tests on the
+same hardware. In this chapter we present results in the form of box plots,
+with the small  addition of the mean line (dashed) next to the median line 
+(solid).
 
 #grid(
   columns: (1fr, 1fr),
@@ -45,11 +46,11 @@ aggregation of 10 `pgbench` runs with the same parameters, excluding the lowest
 and highest values.
 
 In the same test run, we also measured the performance of read-only (@ro)
-operations. For this particular test case, we utilized 20 clients and 1000
+operations. For this particular test case, we utilize 20 clients and 1000
 transactions per client. To distribute the requests among the @ro replicas of
-the database, we employed a NodePort service for load balancing. Naturally, the
-@tps values for the @ro tests were higher compared to the @rw tests, as the @ro
-tests do not involve any disk transactions. We observed that the @ro tests were
+the database, we employ a NodePort service for load balancing. Naturally, the
+@tps values for the @ro tests are higher compared to the @rw tests, as the @ro
+tests do not involve any disk transactions. We observe, that the @ro tests are
 approximately an order of magnitude faster than the @rw tests. This discrepancy
 is expected, given the nature of the workload and the increased number of
 clients and servers.
@@ -60,9 +61,9 @@ important to note that the measured @tps values, even after accounting for the
 greatest outliers, exhibit significant variability.
 
 We use this data to establish a baseline for comparison with the same PostgreSQL
-setup, but running inside a virtual Kubernetes Cluster. We expect ther
+setup, but running inside a virtual Kubernetes Cluster. We expect their
 performance to be similar, as the database is running on the same host cluster,
-but inside a `vcluster` instance. As before discussed in @vcluster-arch-sec,
+but inside a `vcluster` instance. As discussed in @vcluster-arch-sec,
 `vcluster` only maps the pods to a virtual cluster, and real Kubernetes
 resources are backing every required virtual one. The overhead of the
 virtualization comes from the virtual control plane, and the syncer, which is
@@ -70,7 +71,7 @@ responsible for synchronizing the virtual cluster state with the real (backing)
 one.
 
 #figure(
-  caption: [Initial @rw @tps measured by `pgbench` inside a virtual Kubernetes cluster],
+  caption: [Initial @rw @tps in a virtual Kubernetes cluster],
 )[
   #image("../../figures/plots/postgres/unlimited/rw.svg", width: 100%)
 ] <initial-rw-vcluster>
@@ -95,18 +96,18 @@ improvements seen from @initial-rw-baseline to @initial-ro-baseline.
 ] <initial-ro-vcluster>
 
 Recognizing that the outcomes derived from the preceding assessments did not
-wholly reflect the actual performance of `vcluster`, we opted to undertake
+fully reflect the actual performance of `vcluster`, we opt to undertake
 additional tests by elevating the resource constraints for the PostgreSQL
 database's pods.
 
-In these subsequent tests, we augmented the RAM limit to $8G$ and set the CPU
+In these subsequent tests, we augment the RAM limit to $8G$ and set the CPU
 limit to $4$ cores. As illustrated in the data depicted in @rw-limits, the means
 of the throughput values (@tps) exhibit a notably reduced variance. Although the
 throughput delta resembles that of @initial-rw-baseline, the values register an
-increase of approximately $50$-$100%$. This augmentation aligns with
+increase of approximately $50$ to $100%$. This augmentation aligns with
 expectations, considering the expanded access to RAM by the database.
 
-#figure(caption: [Increased resource limits for PostgreSQL])[
+#figure(caption: [@rw @tps with increased resource limits])[
   #image("/figures/plots/postgres/limited/rw.svg", width: 90%)
 ] <rw-limits>
 
@@ -117,11 +118,11 @@ database has access to more RAM and CPU resources.
 
 We can observe that the virtual cluster and the host cluster caught up to each
 other. This we attribute to the fact that the PostgreSQL cluster in the virtual
-Kubernetes cluster and cluster in the host Kubernetes cluster now access to the
-same resource limits. The syncer might have a higher performance overhead for
+Kubernetes cluster and cluster in the host Kubernetes cluster now have access to the
+same amount of resources. The syncer might have a higher performance overhead for
 writing #gls("persistentvolume", suffix: "s", long: true) than reading them.
 
-#figure(caption: [Increased resource limits for PostgreSQL])[
+#figure(caption: [@ro @tps with increased resource limits])[
   #image("/figures/plots/postgres/limited/ro.svg", width: 100%)
 ] <ro-limits>
 
@@ -132,7 +133,8 @@ database. We will now use this feature to measure the performance of PostgreSQL
 with different scales. We will use the same scale factors for the virtual
 cluster and the host cluster.
 
-As discussed in the context of @pgbench-performance-analysis, a battery of tests were conducted across @sf[s] ranging from $10$ to $200$.
+As discussed in the context of @pgbench-performance-analysis, a battery of tests
+are conducted across @sf[s] ranging from $10$ to $200$.
 The ensuing section aims to present the outcomes of these tests. Notably, at
 the lower scale factors, there is an observable alternation in performance
 between the virtual cluster and the host cluster. Although this fluctuation is
@@ -144,7 +146,7 @@ align with the baseline measurements, albeit reflecting relatively diminished
 values. It is important to highlight that the bare-metal cluster consistently 
 outperforms the virtual cluster. This performance contrast  could plausibly be 
 ascribed to the necessity for traversing the syncer in the virtual cluster 
-  configuration.
+configuration.
 
 #figure(caption: [@rw performance for @sf=10], image("/figures/plots/postgres/scales/rw_10.svg", width: 100%) ) <sf10rw-fig>
 
@@ -154,7 +156,7 @@ outcome aligns with expectations since @ro tests exclude write operations to the
 disk. Notably, despite the reduced scaling factor, noteworthy enhancements in 
 @tps values are evident compared to the baseline (with a scale factor of $100$). 
 This enhancement can be attributed to optimizations implemented in the scaled 
-tests, where the number of clients was proportionally adjusted to complement the 
+tests, where the number of clients is proportionally adjusted to complement the 
 scale factor, as elucidated in @pgbench-performance-analysis.
 
 Furthermore, with these optimizations, a convergence is observed between the 
@@ -212,6 +214,48 @@ cluster starts to slightly fall behind the host cluster.
 
 #figure(caption: [@ro performance for @sf=200], image("/figures/plots/postgres/scales/ro_200.svg", width: 100%) ) <sf200ro-fig>
 
+In @rw-scales, we present the means of the @rw tests for the different scale
+factors. We can observe that the virtual cluster and the host cluster have
+similar performance for the smaller scale factors, but the virtual cluster
+starts to fall behind the host cluster for the larger scale factors. Both
+setups reached their peak performance at @sf=100, and performance start to
+fall after that. This is expected as the database has to handle more clients
+and more data within the same resource constraints, which will lead to lower performance.
+
+#figure(caption: [@rw @tps with different database scales])[
+  #image("/figures/plots/postgres/scales/rw_means.svg", width: 100%)
+] <rw-scales>
+
+In @ro-scales, we present the means of the @ro tests for the different scale
+factors. We can observe that the virtual cluster and the host cluster have
+similar performance for the smaller scale factors, but the virtual cluster
+starts to fall behind the host cluster for the largest scale factor. Both
+setups reached their peak performance at @sf=50, and performance start to
+fall after that. This can be attributed to the same reasons as in @rw-scales.
+
+#figure(caption: [@ro @tps with different database scales])[
+  #image("/figures/plots/postgres/scales/ro_means.svg", width: 100%)
+] <ro-scales>
+
+=== `vcluster`'s unexpected benefits
+
+During the evaluation of PostgreSQL within a virtual Kubernetes cluster, we
+observed an unexpected benefit of `vcluster`. We observed that the Kubernetes
+operator managing the PostgreSQL cluster was sluggish when trying to remove
+the cluster. Cleaning up the database cluster took a considerable amount of
+time, which is not ideal, as we want to be able to quickly remove the cluster
+when we are done with it. We can't blame the operator for this, as it is
+as we have not delved into tuning to to suit our needs. We can't expect however,
+that every operator is highly efficient, and we might encounter similar
+problems in the future.
+
+We observed that `vcluster` can help us with this problem. We can create a
+virtual cluster, and deploy the database cluster inside the virtual cluster.
+When we are done with the database cluster, we can simply delete the virtual
+cluster, and the database cluster will be deleted with it. This is a great
+benefit, as we can quickly remove the database cluster, and we don't have to
+wait for the operator to clean up the cluster.
+
 == Kafka <kafka-test-exec-sec>
 
 In this section, we will evaluate the performance of Kafka running inside a
@@ -231,7 +275,7 @@ Kafka's boostrap. We solved this issue by using a custom configuration for the
 virtual cluster, where we manually set the IP addresses of the nodes. This is not 
 a problem for the host cluster, as the Strimzi operator can access the real nodes' IP addresses.
 
-#figure(image("/figures/plots/kafka/latency.svg", width: 100%), caption: [Latencies of Kafka]) <kafka-latency>
+#figure(image("/figures/plots/kafka/latency.svg", width: 90%), caption: [Latencies of Kafka]) <kafka-latency>
 In @kafka-latency, we present means of different latency measurements for the
 virtual cluster and the host cluster. When addressing latency, lower values are 
 desireable.We used the different test cases described in @kafka-sec to create a combined plot of the different measurements. We can
@@ -239,14 +283,15 @@ observe that the two performance values are similar, within the margin of error.
 This is expected, as the virtual cluster and the host cluster have the same
 resource limits. The syncer might have some performance overhead, but it is limited.
 
-#figure(image("/figures/plots/kafka/p90.svg", width: 100%), caption: [90#super[th] percentile of Kafka's latencies]) <kafka-p90>
+#figure(image("/figures/plots/kafka/p90.svg", width: 90%), caption: [90#super[th] percentile of Kafka's latencies]) <kafka-p90>
 
-For the 99#super[th] percentile, we can observe that the virtual cluster 
+For the 99#super[th] percentile in @kafka-p99, we can observe that the virtual cluster 
 once again, exhibits similar performance to the host cluster (within the margin of 
-error). These results are expected and align with the outcomes of the 90#super[th]
+error). 
+These results are expected and align with the outcomes of the 90#super[th]
 percentile measurements in @kafka-p90.
 
-#figure(image("/figures/plots/kafka/p99.svg", width: 100%), caption: [99#super[th] percentile of Kafka's latencies]) <kafka-p99>
+#figure(image("/figures/plots/kafka/p99.svg", width: 90%), caption: [99#super[th] percentile of Kafka's latencies]) <kafka-p99>
 
 == Functionality Testing -- CRD conflict <crd-conflict-sec>
 

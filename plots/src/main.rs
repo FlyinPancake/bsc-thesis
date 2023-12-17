@@ -3,10 +3,11 @@ use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
+use hdrhistogram::Histogram;
 use plotly::box_plot::{BoxMean, BoxPoints};
-use plotly::common::{Font, Title};
-use plotly::layout::{Axis, GridDomain, LayoutGrid};
-use plotly::{BoxPlot, Layout, Plot};
+use plotly::common::{Font, Mode, TickMode, Title};
+use plotly::layout::{Axis, GridDomain, LayoutGrid, Legend};
+use plotly::{BoxPlot, Layout, Plot, Scatter};
 use rayon::prelude::*;
 
 mod data;
@@ -15,10 +16,140 @@ use data::{KafkaTestResult, PostgresTestResult};
 type KafkaTestContainer = HashMap<String, Vec<KafkaTestResult>>;
 
 fn main() -> color_eyre::Result<()> {
-    baseline_graphs()?;
+    // baseline_graphs()?;
     // scaled_tests();
 
-    kafka_plots();
+    // kafka_plots();
+
+    let pgbench_host_results = [
+        "../code/test_results/pgtest_run_3/host_cluster_postgres_test_10_2023-12-11T16:41:49.374536.json",
+        "../code/test_results/pgtest_run_3/host_cluster_postgres_test_20_2023-12-11T17:41:47.794923.json",
+        // "../code/test_results/pgtest_run_3/host_cluster_postgres_test_50_2023-12-11T19:09:30.445457.json",
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_50_2023-12-07T18:15:52.635879.json",
+        // "../code/test_results/pgtest_run_3/host_cluster_postgres_test_100_2023-12-11T22:15:51.328719.json",
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_100_2023-12-07T21:19:47.730306.json",
+        // "../code/test_results/pgtest_run_3/host_cluster_postgres_test_200_2023-12-12T07:07:27.622227.json",
+        "../code/test_results/pgtest_run_2/host_cluster_postgres_test_200_2023-12-08T04:33:11.296866.json",
+    ].iter().map(Path::new).map(
+        |p| {
+            let reader = BufReader::new(File::open(p).unwrap());
+            let data: PostgresTestResult = serde_json::from_reader(reader).unwrap();
+            data
+        }
+    );
+
+    let pgbench_vcluster_results = [
+        "../code/test_results/pgtest_run_3/vcluster_postgres_test_10_2023-12-13T12:34:25.632275.json",
+        "../code/test_results/pgtest_run_3/vcluster_postgres_test_20_2023-12-13T13:41:31.930968.json",
+        "../code/test_results/pgtest_run_3/vcluster_postgres_test_50_2023-12-13T15:34:37.375514.json",
+        // "../code/test_results/pgtest_run_2/vcluster_postgres_test_50_2023-12-08T13:45:23.802124.json",
+        "../code/test_results/pgtest_run_3/vcluster_postgres_test_100_2023-12-13T19:14:53.252644.json",
+        "../code/test_results/pgtest_run_3/vcluster_postgres_test_200_2023-12-14T03:58:19.576822.json",
+    ].iter().map(Path::new).map(
+        |p| {
+            let reader = BufReader::new(File::open(p).unwrap());
+            let data: PostgresTestResult = serde_json::from_reader(reader).unwrap();
+            data
+        }
+    );
+
+    let mut plot = Plot::new();
+    let pgbench_host_tps_rw_means = pgbench_host_results
+        .clone()
+        .map(|x| {
+            let host_rw_tps_sum: f64 = x.read_write.values().map(|x| x.tps).sum();
+            let host_rw_tps_count = x.read_write.len();
+            host_rw_tps_sum / host_rw_tps_count as f64
+        })
+        .collect::<Vec<f64>>();
+
+    let pgbench_vcluster_tps_rw_means = pgbench_vcluster_results
+        .clone()
+        .map(|x| {
+            let host_rw_tps_sum: f64 = x.read_write.values().map(|x| x.tps).sum();
+            let host_rw_tps_count = x.read_write.len();
+            host_rw_tps_sum / host_rw_tps_count as f64
+        })
+        .collect::<Vec<f64>>();
+    let trace = Scatter::new((0..5).collect(), pgbench_host_tps_rw_means)
+        .name("bare-metal")
+        .mode(Mode::LinesMarkers);
+    plot.add_trace(trace);
+
+    let trace = Scatter::new((0..5).collect(), pgbench_vcluster_tps_rw_means)
+        .name("vcluster")
+        .mode(Mode::LinesMarkers);
+    plot.add_trace(trace);
+
+    plot.set_layout(
+        Layout::default()
+            .x_axis(
+                Axis::new()
+                    .title(Title::new("Scaling Factor"))
+                    .tick_mode(TickMode::Array)
+                    .tick_values(vec![0., 1., 2., 3., 4.])
+                    .tick_text(vec!["10", "20", "50", "100", "200"]),
+            )
+            .y_axis(Axis::new().title(Title::new("Average Transactions per second"))),
+    );
+
+    plot.write_image(
+        "images/postgres/scales/rw_means.svg",
+        plotly::ImageFormat::SVG,
+        1100,
+        420,
+        1.0,
+    );
+
+    let mut plot = Plot::new();
+
+    let pgbench_host_tps_ro_means = pgbench_host_results
+        .clone()
+        .map(|x| {
+            let host_rw_tps_sum: f64 = x.read_only.values().map(|x| x.tps).sum();
+            let host_rw_tps_count = x.read_only.len();
+            host_rw_tps_sum / host_rw_tps_count as f64
+        })
+        .collect::<Vec<f64>>();
+
+    let pgbench_vcluster_tps_ro_means = pgbench_vcluster_results
+        .clone()
+        .map(|x| {
+            let host_rw_tps_sum: f64 = x.read_only.values().map(|x| x.tps).sum();
+            let host_rw_tps_count = x.read_only.len();
+            host_rw_tps_sum / host_rw_tps_count as f64
+        })
+        .collect::<Vec<f64>>();
+    let trace = Scatter::new((0..5).collect(), pgbench_host_tps_ro_means)
+        .name("bare-metal")
+        .mode(Mode::LinesMarkers);
+    plot.add_trace(trace);
+
+    let trace = Scatter::new((0..5).collect(), pgbench_vcluster_tps_ro_means)
+        .name("vcluster")
+        .mode(Mode::LinesMarkers);
+
+    plot.add_trace(trace);
+
+    plot.set_layout(
+        Layout::default()
+            .x_axis(
+                Axis::new()
+                    .title(Title::new("Scaling Factor"))
+                    .tick_mode(TickMode::Array)
+                    .tick_values(vec![0., 1., 2., 3., 4.])
+                    .tick_text(vec!["10", "20", "50", "100", "200"]),
+            )
+            .y_axis(Axis::new().title(Title::new("Average Transactions per second"))),
+    );
+
+    plot.write_image(
+        "images/postgres/scales/ro_means.svg",
+        plotly::ImageFormat::SVG,
+        1100,
+        420,
+        1.0,
+    );
 
     Ok(())
 }
