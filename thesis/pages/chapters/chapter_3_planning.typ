@@ -246,20 +246,16 @@ cluster approach is effective in addressing version conflicts. In
 @test-crd we can observe the important metadata and spec fields of the 
 @crd which will be used for testing. 
 
-#figure([```yaml
-  apiVersion: apiextensions.k8s.io/v1
-  kind: CustomResourceDefinition
+#figure([
+```yaml
   metadata:
     name: pdfdocument.k8s.palvolgyid.tmit.bme.hu
   spec:
-    group: k8s.palvolgyid.tmit.bme.hu
     scope: Cluster
     versions:
-      - name: v1
-      # or
-      - name: v2
-      ...
-  ```], caption: [The contents of the test @crd]) <test-crd>
+      - name: v1 # or v2
+```
+], caption: [The contents of the test @crd]) <test-crd>
 
 With a conventional Kubernetes cluster, we expect the cluster to apply the first @crd, 
 and then reject the second @crd, due to it not supporting `v1`. With multiple 

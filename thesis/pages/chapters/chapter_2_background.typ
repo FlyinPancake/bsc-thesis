@@ -155,7 +155,7 @@ set of tools tailored to it, to manage the cluster. Some notable examples are:
 - `rke` -- Rancher Kubernetes Engine by Rancher Labs
 
 #figure(
-  image("../../figures/kubernetes-arch.excalidraw.svg"),
+  image("../../figures/kubernetes-arch.excalidraw.svg", width: 95%),
   caption: "Kubernetes Architecture",
 ) <k8s-arch>
 === Kubernetes Components
