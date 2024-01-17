@@ -25,8 +25,6 @@
 #counter(page).update(1)
 #include "pages/chapters.typ"
 
-
-
 #set page(numbering: "I")
 
 #page[
