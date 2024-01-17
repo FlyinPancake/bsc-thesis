@@ -24,7 +24,7 @@ outputs = ["Reveal"]
 
 {{% fragment %}}Container orchestration{{% /fragment %}}
 {{% fragment %}}Cloud-native{{% /fragment %}}
-{{% fragment %}}Open-soruce{{% /fragment %}}
+{{% fragment %}}Open-source{{% /fragment %}}
 {{% fragment %}}Since 2014{{% /fragment %}}
 
 ---
@@ -111,7 +111,7 @@ outputs = ["Reveal"]
 {{% fragment %}}Operators are Kubernetes applications{{% /fragment %}}  
 {{% fragment %}}They manage other applications{{% /fragment %}}
 {{% fragment %}}They are installed as Kubernetes resources{{% /fragment %}}
-{{% fragment %}}CustomResourceDefinition + controller (in a pod){{% /fragment %}}
+{{% fragment %}}`CustomResourceDefinition` + controller (in a pod){{% /fragment %}}
 ---
 
 {{< slide background="#000" >}}
@@ -172,7 +172,7 @@ outputs = ["Reveal"]
 
 # <span  style="color:#fab387">`vcluster`</span> Performance
 
-<span style="font-size: 0.5em">⚠️ Bright slides ahead ⚠️</span>
+<!-- <span style="font-size: 0.5em">⚠️ Bright slides ahead ⚠️</span> -->
 
 ---
 
@@ -183,10 +183,12 @@ outputs = ["Reveal"]
 
 <img src="Apache_kafka.svg" alt="Apache Kafka logo" width="150" height="150" style="filter: invert(1)">
 </div>
+{{% /section %}}
 
 ---
+{{% section %}}
 
-## PostgreSQL
+# PostgreSQL
 
 > <p style="font-size: 0.8em">throughput testing</p>
 
@@ -204,17 +206,118 @@ outputs = ["Reveal"]
 # Results
 
 ---
-{{< slide background="#fff" >}}
+{{< slide background="#FFF" >}}
 
 ### <span style="color: #000">`S = 10` RO</span>
 
 ![pgbench S=10](figures/plots/postgres/scales/ro_10.svg)
 
 ---
-{{< slide background="#fff" >}}
+{{< slide background="#FFF" >}}
 
-### <span style="color: #000">`S = 10` RW</span>
+### <span style="color: #000">`S = 10` R/W</span>
 
 ![pgbench S=10](figures/plots/postgres/scales/rw_10.svg)
 
+---
+{{< slide background="#FFF" >}}
+
+### <span style="color: #000">`S = 100` RO</span>
+
+![pgbench S=10](figures/plots/postgres/scales/ro_100.svg)
+
+---
+{{< slide background="#FFF" >}}
+
+### <span style="color: #000">`S = 100` R/W</span>
+
+![pgbench S=10](figures/plots/postgres/scales/rw_100.svg)
+
+---
+{{< slide background="#FFF">}}
+
+### <span style="color: #000">Comparison of different S values (RO)</span> 
+
+![pgbench S=all](figures/plots/postgres/scales/ro_means.svg)
+
+
+---
+{{< slide background="#FFF">}}
+
+### <span style="color: #000">Comparison of different S values (R/W)</span> 
+
+![pgbench S=all](figures/plots/postgres/scales/rw_means.svg)
+
 {{% /section %}}
+
+---
+{{% section %}}
+# Kafka 
+> <p style="font-size: 0.8em">latency testing</p>
+
+
+---
+
+## Methodology
+
+{{% fragment %}}Created a **custom** benchmarking tool{{% /fragment %}}
+{{% fragment %}}Measured **end-to-end latencies**{{% /fragment %}}
+{{% fragment %}}Measured with different numbers of{{% /fragment %}}
+<div style="display: flex; flex-direction: row; justify-content: space-evenly;">
+<div class="fragment">Producers</div>
+
+<div class="fragment">Consumers</div>
+</div>
+{{% fragment %}}Run the same tests in:{{% /fragment %}}
+<div style="display: flex; flex-direction: row; justify-content: space-evenly;">
+<div class="fragment"><code style="color: #fab387">vcluster</code></div>
+
+<div class="fragment" style="color: #89dceb">conventional Kubernetes cluster</div>
+</div>
+
+---
+
+## Results
+
+---
+{{< slide background="#FFF">}}
+
+### <span style="color: #000">Means of latencies</span>
+![Kafka latency](figures/plots/kafka/latency.svg)
+
+
+
+---
+{{< slide background="#FFF">}}
+
+### <span style="color: #000">Means of 90th percentile of latencies</span>
+![Kafka latency](figures/plots/kafka/p9.svg)
+
+
+---
+{{< slide background="#FFF">}}
+
+### <span style="color: #000">Means of 99th percentile of latencies</span>
+![Kafka latency](figures/plots/kafka/p99.svg)
+
+
+
+{{% /section %}}
+
+--- 
+{{% section %}}
+# Future work
+
+
+
+{{% fragment %}}Test with more applications{{% /fragment %}}
+{{% fragment %}}Tests with a massive multi-`vcluster` environment{{% /fragment %}}
+{{% fragment %}}Security implications{{% /fragment %}}
+{{% fragment %}}Test with more complex scenarios{{% /fragment %}}
+{{% fragment %}}Test with more complex scenarios{{% /fragment %}}
+
+
+{{% /section %}}
+
+---
+# Thank you!
