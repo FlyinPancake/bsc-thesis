@@ -1,6 +1,6 @@
 baseURL = 'http://example.org/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Performance and usability analysis of virtual clusters in Kubernetes'
 theme = ["github.com/dzello/reveal-hugo"]
 
 [markup.goldmark.renderer]
@@ -14,6 +14,6 @@ mediaType = "text/html"
 isHTML = true
 
 [params.reveal_hugo]
-theme = "black"
-highlight_theme = "monokai"
+custom_theme = "custom-theme.scss"
+custom_theme_compile = true
 slide_number = true
