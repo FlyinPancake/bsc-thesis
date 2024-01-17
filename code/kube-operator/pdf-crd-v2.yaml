@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.18.1/customresourcedefinition.json
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -6,7 +7,7 @@ spec:
   group: k8s.flyinpancake.com
   scope: Cluster
   versions:
-    - name: v1
+    - name: v2
       served: true
       storage: true
       schema:

@@ -24,8 +24,8 @@ spec:
   postgresql:
     version: "15"
   numberOfInstances: 3
-  enableMasterLoadBalancer: true
-  enableReplicaLoadBalancer: true
+  # enableMasterLoadBalancer: true
+  # enableReplicaLoadBalancer: true
   volume:
     size: "10Gi"
     storageClass: "longhorn-postgres"
@@ -36,7 +36,7 @@ spec:
   resources:
     requests:
       cpu: 1000m
-      memory: 100Mi
+      memory: 7Gi
     limits:
-      cpu: 64000m
-      memory: 500Mi
+      cpu: 4000m
+      memory: 8Gi

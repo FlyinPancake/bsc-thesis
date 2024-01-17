@@ -47,6 +47,7 @@ def run_pgbench(args: "List[str]", creds: PostgresCredentials):
         print(result.stderr.decode("utf-8"))
         return result
     except subprocess.CalledProcessError as e:
+        print(e.stderr.decode("utf-8"))
         raise Exception(f"Error running pgbench command: {e}")
 
 
@@ -66,8 +67,18 @@ def get_master_node_ip(postgres_cluster_name: str) -> "Tuple[str, int]":
     # kubectl get pods -o jsonpath={.items..metadata.name} -l application=spilo,cluster-name=acid-minimal-cluster,spilo-role=master -n default
     pod = run_kubectl(f"get svc/{postgres_cluster_name}")
     return (
-        pod["status"]["loadBalancer"]["ingress"][0]["ip"],
+        pod["spec"]["clusterIP"],
         pod["spec"]["ports"][0]["nodePort"],
+    )
+
+
+def get_master_node_lb_ip(postgres_cluster_name: str) -> "Tuple[str, int]":
+    # kubectl get pods -o jsonpath={.items..metadata.name} -l application=spilo,cluster-name=acid-minimal-cluster,spilo-role=master -n default
+    service = run_kubectl(f"get svc/{postgres_cluster_name}")
+    pprint(service)
+    return (
+        service["status"]["loadBalancer"]["ingress"][0]["ip"],
+        service["spec"]["ports"][0]["nodePort"],
     )
 
 
@@ -84,7 +95,9 @@ class InitializeDbResult:
 def initialize_db(
     scaling: int, ip: str, port: int, creds: PostgresCredentials
 ) -> InitializeDbResult:
-    result = run_pgbench(["-i", "-h", ip, "-p", str(port), "-s", str(scaling)], creds)
+    result = run_pgbench(
+        ["-i", "-h", ip, "-p", str(port), "-s", str(scaling), "--no-vacuum"], creds
+    )
 
     performance_data = result.stderr.decode("utf-8").split("\n")[-2]
     # print(performance_data)
@@ -94,8 +107,8 @@ def initialize_db(
         drop_tables=float(matches[1]),
         create_tables=float(matches[2]),
         client_side_generate=float(matches[3]),
-        vacuum=float(matches[4]),
-        primary_keys=float(matches[5]),
+        vacuum=float(-1),
+        primary_keys=float(matches[4]),
     )
     return result
 
@@ -118,18 +131,23 @@ def pgbench(
     ip: str,
     port: int,
     creds: PostgresCredentials,
+    select_only: bool = False,
 ) -> PgBenchResult:
+    pgbench_args = [
+        "-h",
+        ip,
+        "-p",
+        str(port),
+        f"--transactions={transactions}",
+        f"--jobs={therads_per_client}",
+        f"--client={clients}",
+    ]
+    if select_only:
+        pgbench_args.append("--select-only")
+
     result = (
         run_pgbench(
-            [
-                "-h",
-                ip,
-                "-p",
-                str(port),
-                f"--transactions={transactions}",
-                f"--jobs={therads_per_client}",
-                f"--client={clients}",
-            ],
+            pgbench_args,
             creds,
         )
         .stdout.decode("utf-8")

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.18.1/service-v1.json
+kind: Service
+apiVersion: v1
+metadata:
+  name: test-postgres-replica
+spec:
+  selector:
+    application: spilo
+    cluster-name: test-postgres
+    spilo-role: replica
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
+  type: NodePort
+---
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.18.1/service-v1.json
+kind: Service
+apiVersion: v1
+metadata:
+  name: test-postgres-main
+spec:
+  selector:
+    application: spilo
+    cluster-name: test-postgres
+    spilo-role: master
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
+  type: NodePort

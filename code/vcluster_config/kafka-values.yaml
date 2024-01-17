@@ -1,0 +1,4 @@
+sync:
+  nodes:
+    fakeKubeletIPs: false
+    enabled: true

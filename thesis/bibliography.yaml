@@ -6,6 +6,13 @@
 # https://github.com/typst/hayagriva/blob/main/tests/basic.yml
 # yaml-language-server: $schema=
 
+apache-2:
+  type: Web
+  title: Apache License, Version 2.0
+  url:
+    value: https://www.apache.org/licenses/LICENSE-2.0
+    date: 2023-12-10
+
 kuberntes-wikipedia:
   type: Web
   title: Kubernetes
@@ -27,6 +34,27 @@ kube-rs:
     value: https://kube.rs/
     date: 2023-11-23
 
+kubeops:
+  type: Web
+  title: "KubeOps"
+  url:
+    value: https://www.nuget.org/packages/KubeOps/
+    date: 2023-11-23
+
+kopf:
+  type: Web
+  title: "Kopf"
+  url:
+    value: https://kopf.readthedocs.io/en/stable/
+    date: 2023-11-23
+
+operatorhub:
+  type: Web
+  title: "OperatorHub.io"
+  url:
+    value: https://operatorhub.io/
+    date: 2023-11-23
+
 vcluster:
   type: Web
   title: "vCluster"
@@ -41,6 +69,103 @@ stackoverflow-survey:
     value: https://survey.stackoverflow.co/2023
     date: 2023-11-23
 
+pgbench:
+  type: Web
+  title: "pgbench documentation"
+  url:
+    value: https://www.postgresql.org/docs/current/pgbench.html
+    date: 2023-12-01
+
+k3s:
+  type: Web
+  title: "K3s docs"
+  url:
+    value: https://docs.k3s.io/
+    date: 2023-12-03
+
+postgres-replication:
+  type: Web
+  title: PostgreSQL Replication
+  url:
+    value: https://www.postgresql.org/docs/15/runtime-config-replication.html
+    date: 2023-11-20
+
+postgres-wikipedia:
+  type: Web
+  title: PostgreSQL
+  url:
+    value: https://en.wikipedia.org/wiki/PostgreSQL
+    date: 2023-11-20
+
+kafka-wikipedia:
+  type: Web
+  title: Apache Kafka
+  url:
+    value: https://en.wikipedia.org/wiki/Apache_Kafka
+    date: 2023-11-20
+
+kafka-kraft:
+  type: Web
+  title: "Kafka KRaft"
+  url:
+    value: https://developer.confluent.io/learn/kraft/
+    date: 2023-11-20
+strimzi:
+  type: Web
+  title: "Strimzi"
+  url:
+    value: https://strimzi.io/
+    date: 2023-11-20
+
+rust:
+  type: Web
+  title: The Rust Programming Language
+  url:
+    value: https://www.rust-lang.org/
+    date: 2023-12-11
+
+librdkafka:
+  type: Web
+  title: librdkafka - the Apache Kafka C/C++ client library
+  url:
+    value: https://github.com/confluentinc/librdkafka
+    date: 2023-12-11
+
+hdrhistogram:
+  type: Web
+  title: hdrhistogram
+  url:
+    value: https://github.com/HdrHistogram/HdrHistogram_rust/tree/v7.5.4
+    date: 2023-12-11
+
+rust-rdkafka:
+  type: Web
+  title: rust-rdkafka
+  url:
+    value: https://github.com/fede1024/rust-rdkafka
+    date: 2023-12-11
+
+vcluster-github:
+  type: repository
+  title: "vcluster GitHub repository"
+  serial-number: v0.17.1
+  url:
+    value: https://github.com/loft-sh/vcluster
+    date: 2023-11-23
+
+longhorn:
+  type: Web
+  title: Longhorn
+  url:
+    value: https://longhorn.io/
+    date: 2023-12-03
+
+zookeeper:
+  type: Web
+  title: Apache ZooKeeper
+  url:
+    value: https://zookeeper.apache.org/
+    date: 2023-12-03
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix
