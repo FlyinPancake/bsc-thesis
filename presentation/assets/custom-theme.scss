@@ -1,0 +1,51 @@
+@import "reveal-js/dist/theme/template/mixins";
+@import "reveal-js/dist/theme/template/settings";
+
+// Font import
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.cdnfonts.com/css/cascadia-code");
+
+$backgroundColor: #1e1e2e;
+
+$mainColor: #cdd6f4;
+$headingColor: #cdd6f4;
+
+$mainFontSize: 38px;
+$mainFont: "Fira Sans", "Source Sans Pro", Helvetica, sans-serif;
+$headingFont: "Fira Sans", "Source Sans Pro", Helvetica, sans-serif;
+$codeFont: "Cascadia Code", "Source Code Pro", monospace;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: none;
+$headingFontWeight: 600;
+$linkColor: #b4befe;
+$linkColorHover: darken($linkColor, 15%);
+$selectionBackgroundColor: darken($linkColor, 0%);
+
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1em;
+
+@import "reveal-js/dist/theme/template/theme";
+
+section.has-light-background {
+  &,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #222;
+  }
+}
+
+.reveal pre {
+  margin: 50px auto;
+}
+
+// sky class with color #04a5e5
+.sky {
+  background-color: #04a5e5;
+}
