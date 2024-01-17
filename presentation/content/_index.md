@@ -190,4 +190,31 @@ outputs = ["Reveal"]
 
 > <p style="font-size: 0.8em">throughput testing</p>
 
+---
+
+## Methodology
+
+{{% fragment %}}Used `pgbench` with different scales{{% /fragment %}}
+{{% fragment %}}Used `S = 10, 20, 50, 100, 200`{{% /fragment %}}
+{{% fragment %}}Used `pgbench` inside `vcluster`{{% /fragment %}}
+{{% fragment %}}Used `pgbench` outside `vcluster`{{% /fragment %}}
+
+---
+
+# Results
+
+---
+{{< slide background="#fff" >}}
+
+### <span style="color: #000">`S = 10` RO</span>
+
+![pgbench S=10](figures/plots/postgres/scales/ro_10.svg)
+
+---
+{{< slide background="#fff" >}}
+
+### <span style="color: #000">`S = 10` RW</span>
+
+![pgbench S=10](figures/plots/postgres/scales/rw_10.svg)
+
 {{% /section %}}
