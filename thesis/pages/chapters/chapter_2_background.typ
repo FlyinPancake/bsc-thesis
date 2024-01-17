@@ -1,4 +1,5 @@
 // LTeX: enabled=true
+#import "@preview/glossarium:0.2.4": make-glossary, print-glossary, gls, glspl 
 = Background and Related Work <background>
 
 == What are containers?
@@ -139,13 +140,6 @@ Kubernetes resources are the building blocks of Kubernetes applications.
 They are the basic unit of deployment, and they are used to define the application's environment.
 They are defined in YAML files, and can be created, updated, and deleted with the Kubernetes API.
 
-
-=== Deployments
-
-A Deployment is used to descirbe an application's lifecycle.
-It is a Resource, that creates and manages ReplicaSets.
-ReplicaSets are used to ensure that a specified number of pod replicas are running at any given time.
-
 ==== Pods
 
 A Pod is a Resource, that is the basic element of Kubernetes' workload.
@@ -155,6 +149,20 @@ A Pod models an application-specific "logical host": it contains one or more app
 
 Pods are usually created by a controller, such as a Deployment or a StatefulSet.
 These controllers are responsible for creating and managing the Pods.
+
+==== Deployments <deployment>
+
+A Deployment is used to descirbe an application's lifecycle.
+It is a Resource, that creates and manages ReplicaSets.
+ReplicaSets are used to ensure that a specified number of pod replicas are running at any given time.
+
+==== StatefulSets <sts>
+
+StatefulSets are similar to Deployments, however they are used for stateful applications.
+They are used to manage the deployment and scaling of a set of Pods, and provide guarantees about the ordering and uniqueness of these Pods.
+Like a Deployment, a StatefulSet manages Pods that are based on an identical container spec.
+Unlike a Deployment, a StatefulSet maintains a sticky identity for each of their Pods.
+
 
 ==== Services
 
@@ -190,24 +198,24 @@ Kubernetes comes with three (plus one) pre-defined namespaces#cite(<kube-docs>):
 People who run workloads on Kubernetes clusters often like to use automation to take care of repeatable tasks. The operator pattern captures how you can write code to automate a task beyond what Kubernetes itself provides.#cite(<kube-docs>)
 
 The operator pattern is a method for extending Kubernetes' functionality.
-With operators, we can extend Kubernetes' API with custom resources, and controllers.#cite(<kube-docs>)
+With operators, we can extend Kubernetes' API with @crd[s], and controllers#cite(<kube-docs>).
 This allows us to create custom resources, that can be managed by Kubernetes.
-For example, we can create a custom resource for a database, and a controller that will create a database pod when a database resource is created.
+For example, we can create a @crd for a database, and a controller that will create a database pod when a database resource is created.
 
 
 A Kubernetes Operator is usually a combination of a controller and a custom resource definition; however, the latter is not a requirement.
 Controllers are responsible for managing the custom resources.
 They are watching the Kubernetes API for changes in the custom resources, and act accordingly.
-Controllers are usually written in Go, and are compiled into a binary, but that is not a requirement. There are many libraries that can be used to write controllers in other languages, such as `kube-rs` for Rust, `KubeOps` for `.NET` and `Kopf` for Python.
+Controllers are usually written in Go, and are compiled into a binary, but that is not a requirement. There are many libraries that can be used to write controllers in other languages, such as `kube-rs`#cite(<kube-rs>) for Rust, `KubeOps` for `.NET` and `Kopf` for Python.
 
-If the controller is made specifically for Kubernetes it usually supports its own Custom Resource.
-Custom Resources are defined by Custom Resource Definitions (CRDs).
-CRDs are usually generated from the controller's source code.
+If the controller is made specifically for Kubernetes it usually ships with its own Custom Resource.
+Custom Resources are defined by @crd[s].
+They are usually generated from the controller's source code.
 They can be scoped to a namespace, or cluster-wide.
 This will depend on how the controller is implemented and what the use case is.
 
 The most common Kubernetes Operators can be found in the OperatorHub#footnote[https://operatorhub.io/], which is a registry of operators.
-It is maintained by Red Hat, and is a part of the Operator Lifecycle Manager (OLM) [#ref(<olm>)].
+It is maintained by Red Hat, and is a part of the Operator Lifecycle Manager (OLM) [#ref(<olm-section>)].
 OperatorHub is a great place to find operators for common use cases, such as databases, message queues, and monitoring solutions.
 It provides `helm` charts for easy installation.
 
@@ -215,10 +223,11 @@ It provides `helm` charts for easy installation.
 === A Simple Kubernetes Deployment
 
 This is a simple Kubernetes deployment, that hosts a web application.
-This web application requires a database, which is hosted in a separate pod. 
+This web application requires a database, which is managed by a StatefulSet. 
 The database is deployed as two replicas, to ensure high availability. 
-Its data is stored in a persistent volume, which is mounted to the database pod.
-The web application is deployed as three replicas, to ensure high availability.
+Its data is stored in @persistentvolume[s], which is mounted to the database pod.
+Since our web application is stateless, it can be deployed as a Deployment.
+The Deployment ensures that the web application is always running, and it is scaled to three replicas.
 It is exposed to the outside world with an ingress, which is a Kubernetes resource that allows us to expose a service to the outside world.
 
 === Common Kubernetes Use Cases
@@ -240,13 +249,13 @@ It utilizes Kubernetes' namespaces feature, and improves on it.
 Compared to fully separate Kubernetes cluster, virtual clusters do not have their own node pool nor networking. Instead, they inherit these from the parent cluster.
 They are scheduling workloads on the host cluster, however they have their own virtual control plane.
 
-#figure(image("../../figures/vcluster-arch.excalidraw.svg"), caption: "vCluster Architecture")
+#figure(image("../../figures/vcluster-arch.excalidraw.svg"), caption: "vCluster Architecture") <vcluster-arch>
 === vCluster Architecture
 
 vCluster is used in conjunction with `kubectl`, the Kubernetes CLI.
 It creates an alternative Kubernetes API server, that can be used with `kubectl`.
 When connected to the virtual cluster, `kubectl` will behave as if it was connected to a regular Kubernetes cluster.
-This is achieved by connecting to the API server of the virtual cluster control plane.
+This is achieved by connecting to the API server of the virtual cluster control plane #cite(<vcluster>).
 
 This control plane has high-level and low-level components.
 The high-level components only interact with the Kubernetes API, and do not have any knowledge of the host cluster. This includes, but is not limited to: Deployments, StatefulSets, and CustomResourceDefinitions.
@@ -265,10 +274,10 @@ These resources are:
 
 ==== Scheduling
 
-By default vCluster uses the host cluster's scheduler to schedule pods.
+By default, vCluster uses the host cluster's scheduler to schedule pods.
 This is done to avoid the overhead of running a scheduler for each virtual cluster,
 however it introduces some limitations.
-1. Labeling nodes inside the virtual cluster has no effect on scheduling.
+1. Labelling nodes inside the virtual cluster has no effect on scheduling.
 2. Draining or tainting the nodes inside the virtual cluster has no effect on scheduling.
 3. Custom schedulers cannot be used.
 
@@ -312,13 +321,19 @@ This is a common problem, and in Kubernetes namespaces can be used as a workarou
 Some of these operators have to be installed cluster-wide, and cannot be installed in a namespace.
 This creates a problem, since we cannot use namespaces to isolate them.
 
-=== Operator Lifecycle Manager <olm>
+=== #gls("olm", long: true) <olm-section>
 
-The Operator Lifecycle Manager (OLM) is a tool that helps users install, update, and manage the lifecycle of all Operators and their associated services running across their Kubernetes clusters.
-OLM extends Kubernetes' native API and CLI to provide a declarative way to install, manage, and upgrade Operators and their dependencies in a cluster.
+@olm is a tool that helps users install, update, and manage the lifecycle of all Operators and their associated services running across their Kubernetes clusters.
+The Operator Lifecycle includes its installation, updates, and removal in a Kubernetes cluster.
+Operators can be installed from Catalogs, which are collections of Operators that have been built, tested, and are maintained for Kubernetes and OpenShift users by independent software vendors (ISVs), community members, and Red Hat (the makers of @olm).
+@olm extends Kubernetes' native API and CLI to provide a declarative way to manage Operators and their dependencies in a cluster.
 
-It can be used to solve version mismatch problems by installing the adequate version of the operator in the cluster.
-This solution is not a silver bullet, since it requires that some version of the operator supports all the version requirements of the dependent pieces of software.
+To solve the version conflict the Dependency Resolution can be used. 
+Dependency Resolution solves version mismatch problems by installing the adequate version of the operator that satisfies all of the version reuqirements in the cluster.
+
+For example: if we have two operators: `foo` and `bar` that both depend on `baz`, @olm will look at the version requirements of `foo` and `bar`. If `foo` requires `baz` version `1.2` to `1.8`, and `bar` requires `baz` version `1.7` exactly, @olm will install `baz` version `1.7`, since it satisfies both requirements.
+
+In an other exampel if `foo` requires `baz` version `1.2` to `1.8`, and `bar` requires `baz` version `1.9` exactly, @olm will not be able to install `baz`, since there is no version that satisfies both requirements. In this case, the user has to manually resolve the conflict somehow. This is why @olm is not a silver bullet, and it cannot solve all version conflicts.
 
 === OpenStack Projects
 
@@ -328,3 +343,11 @@ When using OpenStack the maintainer has the option to split the installation int
 This allows for the creation of a dedicated project for each cluster, which can be used to isolate the different versions of the operator.
 
 This solution is not sufficient, since it removes the ability to dynamically scale the cluster, and the maintenance overhead is increased.
+
+=== How can vCluster help?
+
+Since the @crd[s] can be scoped to cluster-wide or namespace-scoped, we cannot always use namespaces to isolate the different versions of the operator.
+However, vCluster considers the @crd[s] high-level components, as we have seen in @vcluster-arch and does not sync them to the host cluster.
+Since the @crd[s] are not synced to the host cluster, they do not appear in the host cluster, only in the virtual control plane.
+This leads to the conclusion, that the @crd[s] are isolated to the virtual cluster.
+

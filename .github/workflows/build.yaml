@@ -10,15 +10,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      
+      - name: "Install Required Fonts"
+        run: |
+          curl -Lo libre_baskerville.zip 'https://fonts.google.com/download?family=Libre%20Baskerville'
+          unzip libre_baskerville.zip -d /usr/share/fonts
+          curl -Lo cascadiacode.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.0/CascadiaCode.zip
+          unzip cascadiacode.zip -d /usr/share/fonts
+          fc-cache -fv
 
-      - name: Typst
-        uses: lvignoli/typst-action@main
+      - name: Setup Typst
+        uses: yusancky/setup-typst@v2
+        id: setup-typst
         with:
-          source_file: thesis/main.typ
+          version: 'v0.9.0'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check Libre Baskerville font
+        run: typst fonts | grep -w '^Libre Baskerville$'
+      - name: Check CaskaydiaCove NF font
+        run: typst fonts | grep -w '^CaskaydiaCove NF$'
+      - name: Typst Compile
+        run: typst compile thesis/main.typ
 
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
-        if: ${{ !env.ACT }}
+        if: ${{ !github.event.act }}
         with:
           name: PDF
           path: thesis/main.pdf

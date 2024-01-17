@@ -20,6 +20,27 @@ kube-docs:
     value: https://kubernetes.io/docs/home/
     date: 2023-11-19
 
+kube-rs:
+  type: Web
+  title: "kube-rs"
+  url:
+    value: https://kube.rs/
+    date: 2023-11-23
+
+vcluster:
+  type: Web
+  title: "vCluster"
+  url:
+    value: https://www.vcluster.com/docs/
+    date: 2023-11-23
+
+stackoverflow-survey:
+  type: Web
+  title: "Stack Overflow Developer Survey 2023"
+  url:
+    value: https://survey.stackoverflow.co/2023
+    date: 2023-11-23
+
 harry:
   type: Book
   title: Harry Potter and the Order of the Phoenix
