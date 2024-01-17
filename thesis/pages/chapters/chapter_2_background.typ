@@ -203,12 +203,6 @@ are the basic unit of deployment, and they are used to define the application's
 environment. They are defined in YAML files, and can be created, updated, and
 deleted with the Kubernetes API.
 
-=== Deployments
-
-A Deployment is used to descirbe an application's lifecycle. It is a Resource,
-that creates and manages ReplicaSets. ReplicaSets are used to ensure that a
-specified number of pod replicas are running at any given time.
-
 ==== Pods
 
 A Pod is a Resource, that is the basic element of Kubernetes' workload. It is a
@@ -293,10 +287,10 @@ take care of repeatable tasks. The operator pattern captures how you can write
 code to automate a task beyond what Kubernetes itself provides.#cite(<kube-docs>)
 
 The operator pattern is a method for extending Kubernetes' functionality. With
-operators, we can extend Kubernetes' API with custom resources, and controllers.#cite(<kube-docs>)
+operators, we can extend Kubernetes' API with @crd[s], and controllers#cite(<kube-docs>).
 This allows us to create custom resources, that can be managed by Kubernetes.
-For example, we can create a custom resource for a database, and a controller
-that will create a database pod when a database resource is created.
+For example, we can create a @crd for a database, and a controller that will
+create a database pod when a database resource is created.
 
 A Kubernetes Operator is usually a combination of a controller and a custom
 resource definition; however, the latter is not a requirement. Controllers are
@@ -304,20 +298,20 @@ responsible for managing the custom resources. They are watching the Kubernetes
 API for changes in the custom resources, and act accordingly. Controllers are
 usually written in Go, and are compiled into a binary, but that is not a
 requirement. There are many libraries that can be used to write controllers in
-other languages, such as `kube-rs` for Rust, `KubeOps` for `.NET` and `Kopf` for
-Python.
+other languages, such as `kube-rs`#cite(<kube-rs>) for Rust, `KubeOps`@kubeops
+for `.NET` and `Kopf`@kopf for Python.
 
-If the controller is made specifically for Kubernetes it usually supports its
-own Custom Resource. Custom Resources are defined by Custom Resource Definitions
-(CRDs). CRDs are usually generated from the controller's source code. They can
-be scoped to a namespace, or cluster-wide. This will depend on how the
-controller is implemented and what the use case is.
+If the controller is made specifically for Kubernetes it usually ships with its
+own Custom Resource. Custom Resources are defined by @crd[s]. They are usually
+generated from the controller's source code. They can be scoped to a namespace,
+or cluster-wide. This will depend on how the controller is implemented and what
+the use case is.
 
-The most common Kubernetes Operators can be found in the OperatorHub#footnote[https://operatorhub.io/],
-which is a registry of operators. It is maintained by Red Hat, and is a part of
-the Operator Lifecycle Manager (OLM) [#ref(<olm>)]. OperatorHub is a great place
-to find operators for common use cases, such as databases, message queues, and
-monitoring solutions. It provides `helm` charts for easy installation.
+The most common Kubernetes Operators can be found in the
+OperatorHub@operatorhub, which is a registry of operators. It is maintained by
+Red Hat, and is a part of the @olm [#ref(<olm-section>)]. OperatorHub is a great
+place to find operators for common use cases, such as databases, message queues,
+and monitoring solutions. It provides `helm` charts for easy installation.
 
 #figure(
   image("../../figures/kubernetes-deployment-example.excalidraw.svg"),
@@ -325,13 +319,15 @@ monitoring solutions. It provides `helm` charts for easy installation.
 ) <k8s-deployment>
 === A Simple Kubernetes Deployment
 
-This is a simple Kubernetes deployment, that hosts a web application. This web
-application requires a database, which is hosted in a separate pod. The database
-is deployed as two replicas, to ensure high availability. Its data is stored in
-a persistent volume, which is mounted to the database pod. The web application
-is deployed as three replicas, to ensure high availability. It is exposed to the
-outside world with an ingress, which is a Kubernetes resource that allows us to
-expose a service to the outside world.
+In @k8s-deployment we can see a simple Kubernetes deployment, that hosts a web
+application. This web application requires a database, which is managed by a
+StatefulSet. The database is deployed as two replicas, to ensure high
+availability. Its data is stored in @persistentvolume[s], which is mounted to
+the database pod. Since our web application is stateless, it can be deployed as
+a Deployment. The Deployment ensures that the web application is always running,
+and it is scaled to three replicas. It is exposed to the outside world with an
+ingress, which is a Kubernetes resource that allows us to expose a service to
+the outside world.
 
 === Common Kubernetes Use Cases
 
@@ -356,14 +352,14 @@ cluster, however they have their own virtual control plane.
 #figure(
   image("../../figures/vcluster-arch.excalidraw.svg"),
   caption: "vCluster Architecture",
-)
-=== vCluster Architecture
+) <vcluster-arch-fig>
+=== vCluster Architecture <vcluster-arch-sec>
 
 vCluster is used in conjunction with `kubectl`, the Kubernetes CLI. It creates
 an alternative Kubernetes API server, that can be used with `kubectl`. When
 connected to the virtual cluster, `kubectl` will behave as if it was connected
 to a regular Kubernetes cluster. This is achieved by connecting to the API
-server of the virtual cluster control plane.
+server of the virtual cluster control plane #cite(<vcluster>).
 
 As we can see in @vcluster-arch-fig, this control plane has high-level and
 low-level components. The high-level components only interact with the
@@ -387,10 +383,10 @@ manage the virtual cluster. These resources are:
 
 ==== Scheduling
 
-By default vCluster uses the host cluster's scheduler to schedule pods. This is
+By default, vCluster uses the host cluster's scheduler to schedule pods. This is
 done to avoid the overhead of running a scheduler for each virtual cluster,
 however it introduces some limitations.
-1. Labeling nodes inside the virtual cluster has no effect on scheduling.
+1. Labelling nodes inside the virtual cluster has no effect on scheduling.
 2. Draining or tainting the nodes inside the virtual cluster has no effect on
   scheduling.
 3. Custom schedulers cannot be used.
@@ -453,16 +449,33 @@ to isolate them.
 
 === #gls("olm", long: true) <olm-section>
 
-The Operator Lifecycle Manager (OLM) is a tool that helps users install, update,
-and manage the lifecycle of all Operators and their associated services running
-across their Kubernetes clusters. OLM extends Kubernetes' native API and CLI to
-provide a declarative way to install, manage, and upgrade Operators and their
-dependencies in a cluster.
+@olm is a tool that helps users install, update, and manage the lifecycle of all
+Operators and their associated services running across their Kubernetes
+clusters. The Operator Lifecycle includes its installation, updates, and removal
+in a Kubernetes cluster. Operators can be installed from Catalogs, which are
+collections of Operators that have been built, tested, and are maintained for
+Kubernetes and OpenShift users by independent software vendors (ISVs), community
+members, and Red Hat (the makers of @olm). @olm extends Kubernetes' native API
+and CLI to provide a declarative way to manage Operators and their dependencies
+in a cluster.
 
-It can be used to solve version mismatch problems by installing the adequate
-version of the operator in the cluster. This solution is not a silver bullet,
-since it requires that some version of the operator supports all the version
-requirements of the dependent pieces of software.
+To solve the version conflict dependency resolution can be used. Dependency
+resolution solves version mismatch problems by installing the adequate version
+of the operator that satisfies all of the version reuqirements in the cluster.
+This relies on the the operator follows the semantic versioning scheme, and
+declares its dependencies correctly.
+
+For example: if we have two operators: `foo` and `bar` that both depend on
+`baz`, @olm will look at the version requirements of `foo` and `bar`. If `foo`
+requires `baz` version `1.2` to `1.8`, and `bar` requires `baz` version `1.7`
+exactly, @olm will install `baz` version `1.7`, since it satisfies both
+requirements.
+
+In an other exampel if `foo` requires `baz` version `1.2` to `1.8`, and `bar`
+requires `baz` version `1.9` exactly, @olm will not be able to install `baz`,
+since there is no version that satisfies both requirements. In this case, the
+user has to manually resolve the conflict somehow. This is why @olm is not a
+silver bullet, and it cannot solve all version conflicts.
 
 === OpenStack Projects
 
@@ -476,3 +489,54 @@ different versions of the operator.
 
 This solution is not sufficient, since it removes the ability to dynamically
 scale the cluster, and the maintenance overhead is increased.
+
+=== How can vCluster help? <vcluster-version-conflict-sec>
+
+Since the @crd[s] can be scoped to cluster-wide or namespace-scoped, we cannot
+always use namespaces to isolate the different versions of the operator.
+However, vCluster considers the @crd[s] high-level components, as we have seen
+in @vcluster-arch-fig and does not sync them to the host cluster. Since the
+@crd[s] are not synced to the host cluster, they do not appear in the host
+cluster, only in the virtual control plane. This leads to the conclusion, that
+we may have conflicting @crd[s], that are isolated to their virtual cluster.
+
+== PostgreSQL
+
+PostgreSQL, an open-source relational database management system (RDBMS), stands
+as a robust and versatile solution within the realm of data management.
+Developed with a strong emphasis on extensibility, standards compliance, and
+ACID (Atomicity, Consistency, Isolation, Durability) properties, PostgreSQL has
+emerged as a preferred choice for diverse applications ranging from small-scale
+projects to large-scale enterprise systems. Its extensible nature allows users
+to define custom data types, operators, and functions, fostering adaptability to
+specific project requirements. The support for various programming languages,
+including but not limited to, SQL, Python, and Java, further enhances its
+flexibility. With a mature and active community contributing to its development,
+PostgreSQL continually evolves, incorporating advanced features such as advanced
+indexing mechanisms, full-text search capabilities, and support for complex data
+types, positioning itself as a pivotal element in the landscape of relational
+databases#cite(<postgres-wikipedia>). In this thesis we will utilize PostgreSQL
+as an example application, to showcase the performance and capabilities of
+vCluster.
+
+// === pgbench
+
+// Pgbench, a benchmarking tool for PostgreSQL is an extra component of PostgreSQL,
+// it  enables the assessment of the database system's performance, scalability, and
+// concurrency handling. This open-source tool offers a streamlined approach to
+// simulate various workloads, aiding researchers and developers in evaluating
+// PostgreSQL's capabilities under different conditions. With its simplicity and
+// efficiency, pgbench serves as a valuable instrument for gauging the
+// responsiveness and stability of PostgreSQL databases.
+
+== Apache Kafka
+Apache Kafka, a distributed event streaming platform, plays a pivotal role in
+modern data architectures, standing out as a key element in various data
+processing scenarios. Built for high-throughput, fault tolerance, and real-time
+data streaming, Kafka facilitates the seamless exchange of information between
+different components in a distributed system. Its publish-subscribe model and
+durable storage capabilities make it ideal for building scalable and resilient
+data pipelines. Kafka's ability to handle massive volumes of data with low
+latency has made it a go-to solution for applications ranging from real-time
+analytics to log aggregation#cite(<kafka-wikipedia>). In this thesis we will
+utilize Apache Kafka as an example application, for our latency benchmarks.
