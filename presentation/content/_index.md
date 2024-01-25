@@ -313,9 +313,48 @@ outputs = ["Reveal"]
 {{% fragment %}}Test with more applications{{% /fragment %}}
 {{% fragment %}}Tests with a massive multi-`vcluster` environment{{% /fragment %}}
 {{% fragment %}}Security implications{{% /fragment %}}
-{{% fragment %}}Test with more complex scenarios{{% /fragment %}}
-{{% fragment %}}Test with more complex scenarios{{% /fragment %}}
 
+
+{{% /section %}}
+
+--- 
+
+
+{{% section %}}
+# Questions
+---
+
+## What is the motivation for using virtual clusters? 
+
+List a couple of concrete problems that cannot be solved in a traditional cluster, but virtual clusters provide a solution for.
+
+---
+
+### Scenarios that are improved with <span  style="color:#fab387">vcluster</span>
+<ul>
+    <li class="fragment">Multi tenancy with <span  style="color:#fab387">virtual clusters</span></li>
+    <ul>
+        <li class="fragment">Dynamically sharing resources between isolated clusters</li>
+        <li class="fragment">Lower costs compared to real <span style ="color: #89dceb">Kubernetes</span></li>
+        <li class="fragment">Higher isolation compared to namespaces</li>    
+    </ul>
+    <li class="fragment"><code>CRD</code> incompatibility</li>
+    <ul>
+        <li class="fragment">Dependency isolation like containers</li>
+        <li class="fragment">More managable single purpose clusters</li>
+        <!-- <li class="fragment">Higher isolation compared to namespaces</li> -->
+    </ul>
+</ul>
+
+
+---
+Based on the measurement results presented in the thesis, **in which scenarios** (high/low workload, type of DB workloads etc.) **would you recommend the application of virtual clusters for performance critical applications**?
+
+---
+
+Comparable latencies with Kafka
+
+Noticeable performance hit especially with DB writes
 
 {{% /section %}}
 

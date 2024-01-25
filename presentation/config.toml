@@ -2,6 +2,9 @@ baseURL = 'http://example.org/'
 languageCode = 'en-us'
 title = 'Performance and usability analysis of virtual clusters in Kubernetes'
 theme = ["github.com/dzello/reveal-hugo"]
+relativeURLs = false
+uglyURLs = true
+
 
 [markup.goldmark.renderer]
 unsafe = true
